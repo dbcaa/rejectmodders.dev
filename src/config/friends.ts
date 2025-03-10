@@ -13,15 +13,20 @@ export type FriendItemType = {
 
 export const friends: Array<FriendItemType> = [
   {
-    name: 'Corey Chiu',
-    link: { href: 'https://coreychiu.com' },
-    logo: 'https://coreychiu.com/path/to/logo.png' // You can provide the logo URL here
+    name: 'FeralHS',
+    link: { href: 'https://discord.com/users/935404512691224586' },
+    logo: 'https://cdn.is-it.pink/u/FeralHS.png' 
   },
   {
-    name: 'John Doe',
-    link: { href: 'https://johndoe.com' },
-    // No logo here, it will fallback to the favicon
-  }
+    name: 'weebUHD',
+    link: { href: 'https://discord.com/users/402921518515879937' },
+    logo: 'https://cdn.is-it.pink/u/weebUHD.jpg'
+  },
+  {
+    name: 'Jiggly Balls',
+    link: { href: 'https://discord.com/users/1022085572719808542' },
+    logo: 'https://cdn.is-it.pink/u/jiggly-balls.jpg'
+  },
 ]
 
 
