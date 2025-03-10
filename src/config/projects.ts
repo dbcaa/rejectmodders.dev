@@ -39,51 +39,20 @@ export type ProjectItemType = {
     {
       name: 'Public CDN',
       description:
-        'Best public CDN for free.',
+        'The best public CDN for free.',
       link: { href: 'cdn.is-it.pink', label: 'Best Directories' },
       category: ['Website'],
       techStack: ['Next.js', 'TailwindCSS', 'Shadcn/UI'],
       tags: ['CDN', 'Image Host']
     },
     {
-      name: 'User Growth',
+      name: 'Ignited Hosting',
       description:
-        'Boost Your business growth with UserGrowth.link',
-      link: { href: 'usergrowth.link', label: 'User Growth' },
-      logo: '/images/icon/usergrowth.ico',
+        'Fast server, reliable servers, and no bs.',
+      link: { href: 'ignitedhosting.com', label: 'Ignited Hosting' },
       category: ['Website'],
       techStack: ['Next.js', 'TailwindCSS', 'Shadcn/UI'],
-      tags: ['User Growth', 'Marketing', 'SEO']
-    },
-    {
-      name: 'Dev Toolset',
-      description:
-        'Open-source database-free tools directory.',
-      link: { href: 'devtoolset.net', label: 'Dev Toolset' },
-      logo: '/images/icon/devtoolset.png',
-      category: ['Website'],
-      techStack: ['Next.js', 'TailwindCSS', 'Shadcn/UI'],
-      tags: ['Open Source', 'Database-Free', 'Tools Directory']
-    },
-    {
-      name: 'Domain Score',
-      description:
-        'Ultimate AI-Powered tool for domain scoring and evaluation',
-      link: { href: 'domainscore.ai', label: 'Domain Score' },
-      logo: '/images/icon/domainscore.png',
-      category: ['Website'],
-      techStack: ['Next.js', 'TailwindCSS', 'Shadcn/UI'],
-      tags: ['Domain', 'AI', 'SEO']
-    },
-    {
-      name: 'MagicBox Tools',
-      description:
-        'Find the best AI tools in MagicBox.tools',
-      link: { href: 'magicbox.tools', label: 'MagicBox Tools' },
-      logo: '/images/icon/magicbox.png',
-      category: ['Website'],
-      techStack: ['Next.js', 'TailwindCSS', 'Shadcn/UI'],
-      tags: ['AI', 'Tools Directory']
+      tags: ['Hosting', 'Game Panel', 'FiveM']
     },
   ]
   
