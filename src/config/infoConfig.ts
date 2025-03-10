@@ -1,9 +1,5 @@
 export * from './projects'
 export * from './friends'
-export * from './changelog'
-export * from './education'
-export * from './career'
-export * from './activity'
 
 
 // personal info
@@ -20,11 +16,6 @@ export const aboutParagraphs = [
   "I have a lot of hobbies, such as travelling, photography, watching movies, music and so on.",
   "I'm working as a software develop engineer in Shenzhen, China now. And I'm building a lot of side projects in my spare time."
 ]
-
-
-// blog
-export const blogHeadLine = "What I've thinking about."
-export const blogIntro = "I've written something about AI, programming and life."
 
 
 // social links
