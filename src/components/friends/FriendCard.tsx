@@ -11,6 +11,9 @@ import Link from 'next/link'
 export function FriendCard({ friend, titleAs }: { friend: FriendItemType, titleAs?: keyof JSX.IntrinsicElements }) {
   const utmLink = `${friend.link.href}?utm_source=${utm_source}`
   let Component = titleAs ?? 'h2'
+  
+  const logoSrc = friend.logo ?? `https://icons.duckduckgo.com/ip3/${new URL(friend.link.href).hostname}.ico`
+
   return (
     <li className='group relative flex flex-col items-start h-full'>
       <div className="relative flex flex-col justify-between h-full w-full p-4 rounded-2xl border border-muted-foreground/20 shadow-sm transition-all group-hover:scale-[1.03] group-hover:shadow-md group-hover:bg-muted/5">
@@ -18,8 +21,8 @@ export function FriendCard({ friend, titleAs }: { friend: FriendItemType, titleA
           <div className='flex flex-col sm:flex-row justify-center sm:justify-start items-start sm:items-center gap-4'>
             <div className="relative z-10 flex h-12 w-12 items-center justify-center rounded-full">
               <Image
-                src={friend.logo ?? `https://icons.duckduckgo.com/ip3/${new URL(friend.link.href).hostname}.ico`}
-                alt={`${friend.name} favicon`}
+                src={logoSrc}
+                alt={`${friend.name} logo`}
                 width={36}
                 height={36}
                 sizes='36px'
