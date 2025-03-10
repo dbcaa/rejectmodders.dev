@@ -17,7 +17,7 @@ export function FriendCard({ friend, titleAs }: { friend: FriendItemType, titleA
           <div className='flex flex-col sm:flex-row justify-center sm:justify-start items-start sm:items-center gap-4'>
             <div className="relative z-10 flex h-12 w-12 items-center justify-center rounded-full">
               <Image
-                src={`/src/images/friends/${friend.image}`}
+                src={`/public/images/friends/${friend.image}`}
                 alt={`${friend.name} logo`}
                 width={36}
                 height={36}
