@@ -19,13 +19,13 @@ export type ProjectItemType = {
   // projects 
   export const projects: Array<ProjectItemType> = [
     {
-      name: 'GitHub Cards',
+      name: 'Disutils Team',
       description:
         'Showcase your GitHub contributions into stunning visual cards.',
-      link: { href: 'github.cards', label: 'GitHub Cards' },
+      link: { href: 'disutils.com', label: 'Disutils Team' },
       category: ['Website'],
       techStack: ['Next.js', 'TailwindCSS', 'Shadcn/UI'],
-      tags: ['Visual Cards', 'GitHub Contribution Cards']
+      tags: ['Discord Bots', 'Custom Bots']
     },
     {
       name: 'AI Best Tools',
