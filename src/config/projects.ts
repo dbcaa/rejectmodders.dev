@@ -67,27 +67,27 @@ export type ProjectItemType = {
   
   export const githubProjects: Array<ProjectItemType> = [
     {
-      name: 'Devtoolset',
-      description: 'Open-source & database-free developer tools navigator / 开源无数据库配置的开发者工具导航站',
-      link: { href: 'github.com/iAmCorey/devtoolset', label: 'Devtoolset' },
-      gitStars: 203,
-      gitForks: 67
+      name: 'disckit',
+      description: 'An open source utilities library for the disutils bots.',
+      link: { href: 'github.com/disutils/disckit', label: 'disckit' },
+      gitStars: 1,
+      gitForks: 0
     },
     {
-      name: 'Corey Chiu Portfolio Template',
+      name: 'Is It Pink?',
       description:
-        'portfolio template by corey chiu',
-      link: { href: 'github.com/iAmCorey/coreychiu-portfolio-template', label: 'Corey Chiu Portfolio Template' },
-      gitStars: 229,
-      gitForks: 30
+        'A kids game I made for the fun of it.',
+      link: { href: 'github.com/disutils/is-it.pink', label: 'Is It Pink?' },
+      gitStars: 0,
+      gitForks: 0
     },
     {
-      name: 'Chrome Extension Plasmo Template',
+      name: 'Discord.py-Template',
       description:
-        'A chrome extension template using plasmo, tailwind css, shadcn/ui',
-      link: { href: 'github.com/iAmCorey/chrome-extension-plasmo-template', label: 'Chrome Extension Plasmo Template' },
-      gitStars: 54,
-      gitForks: 10
+        'A Discord.py template made so others know how to make discord bots in python.',
+      link: { href: 'github.com/RejectModders/Discord.py-Template', label: 'Discord.py-Template' },
+      gitStars: 1,
+      gitForks: 1
     },
     {
       name: 'Awesome Indie Hacker Tools',
