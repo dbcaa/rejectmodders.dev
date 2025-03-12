@@ -68,29 +68,6 @@ export type ProjectItemType = {
   export const githubProjects: Array<ProjectItemType> = [
     {
       name: 'disckit',
-      description: 'An open source utilities library for the disutils bots',
-      link: { href: 'github.com/disutils/disckit', label: 'disckit' },
-      gitStars: 1,
-      gitForks: 0
-    },
-    {
-      name: 'Is It Pink?',
-      description:
-        'A kids game I made for the fun of it',
-      link: { href: 'github.com/disutils/is-it.pink', label: 'Is It Pink' },
-      gitStars: 0,
-      gitForks: 0
-    },
-    {
-      name: 'Discord.py-Template',
-      description:
-        'A Discord.py template made so others know how to make discord bots in python',
-      link: { href: 'github.com/RejectModders/Discord.py-Template', label: 'Discord.py-Template' },
-      gitStars: 1,
-      gitForks: 1
-    },
-    {
-      name: 'Awesome Indie Hacker Tools',
       description:
         '独立开发/出海开发相关技术栈及工具收录 / Find the best tools for indie hackers here',
       link: { href: 'github.com/iAmCorey/awesome-indie-hacker-tools', label: 'Awesome Indie Hacker Tools' },
@@ -98,7 +75,7 @@ export type ProjectItemType = {
       gitForks: 69
     },
     {
-      name: 'Awesome AI Directory',
+      name: 'Is It Pink?',
       description:
         'AI资源工具导航站收录 / Find all the best AI directories',
       link: { href: 'github.com/iAmCorey/awesome-ai-directory', label: 'Awesome AI Directory' },
@@ -106,19 +83,12 @@ export type ProjectItemType = {
       gitForks: 7
     },
     {
-      name: 'Producthunt Daily Bot',
+      name: 'Discord.py-Template',
       description:
         'A bot getting product hunt daily top products',
       link: { href: 'github.com/iAmCorey/producthunt-daily-bot', label: 'Producthunt Daily Bot' },
       gitStars: 3,
       gitForks: 3
-    },
-    {
-      name: 'Cantonese Echoes',
-      description:
-        'Cantonese Echoes / 粵語殘片',
-      link: { href: 'github.com/iAmCorey/Cantonese-Echoes', label: 'Cantonese Echoes' },
-      gitStars: 1
     },
   ]
   
