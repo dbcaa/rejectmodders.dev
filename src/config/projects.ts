@@ -68,7 +68,7 @@ export type ProjectItemType = {
   export const githubProjects: Array<ProjectItemType> = [
     {
       name: 'disckit',
-      description: 'An open source utilities library for the disutils bots',
+      description: 'An open source utilities library for the disutils bots.',
       link: { href: 'github.com/disutils/disckit', label: 'disckit' },
       gitStars: 1,
       gitForks: 0
@@ -76,7 +76,7 @@ export type ProjectItemType = {
     {
       name: 'Is It Pink?',
       description:
-        'portfolio template by corey chiu',
+        'A kids game I made for the fun of it.',
       link: { href: 'github.com/disutils/is-it.pink', label: 'Is It Pink?' },
       gitStars: 0,
       gitForks: 0
@@ -84,7 +84,7 @@ export type ProjectItemType = {
     {
       name: 'Discord.py-Template',
       description:
-        'A chrome extension template using plasmo, tailwind css, shadcn/ui',
+        'A Discord.py template made so others know how to make discord bots in python.',
       link: { href: 'github.com/RejectModders/Discord.py-Template', label: 'Discord.py-Template' },
       gitStars: 1,
       gitForks: 1
