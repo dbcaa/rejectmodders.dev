@@ -68,27 +68,23 @@ export type ProjectItemType = {
   export const githubProjects: Array<ProjectItemType> = [
     {
       name: 'disckit',
-      description:
-        '独立开发/出海开发相关技术栈及工具收录 / Find the best tools for indie hackers here',
-      link: { href: 'github.com/iAmCorey/awesome-indie-hacker-tools', label: 'Awesome Indie Hacker Tools' },
-      gitStars: 815,
-      gitForks: 69
+      description: 'An open source utilities library for the disutils bots',
+      link: { href: 'github.com/disutils/disckit', label: 'disckit' },
+      gitStars: 1
     },
     {
       name: 'Is It Pink?',
       description:
-        'AI资源工具导航站收录 / Find all the best AI directories',
-      link: { href: 'github.com/iAmCorey/awesome-ai-directory', label: 'Awesome AI Directory' },
-      gitStars: 40,
-      gitForks: 7
+        'A kids game I made for the fun of it',
+      link: { href: 'github.com/disutils/is-it.pink', label: 'Is It Pink' },
     },
     {
       name: 'Discord.py-Template',
       description:
-        'A bot getting product hunt daily top products',
-      link: { href: 'github.com/iAmCorey/producthunt-daily-bot', label: 'Producthunt Daily Bot' },
-      gitStars: 3,
-      gitForks: 3
+        'A Discord.py template made so others know how to make discord bots in python',
+      link: { href: 'github.com/RejectModders/Discord.py-Template', label: 'Discord.py-Template' },
+      gitStars: 1,
+      gitForks: 1
     },
   ]
   
