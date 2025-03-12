@@ -70,13 +70,16 @@ export type ProjectItemType = {
       name: 'disckit',
       description: 'An open source utilities library for the disutils bots.',
       link: { href: 'github.com/disutils/disckit', label: 'disckit' },
-      gitStars: 1
+      gitStars: 1,
+      gitForks: 0
     },
     {
       name: 'Is It Pink?',
       description:
         'A kids game I made for the fun of it.',
       link: { href: 'github.com/disutils/is-it.pink', label: 'Is It Pink' },
+      gitStars: 0,
+      gitForks: 0
     },
     {
       name: 'Discord.py-Template',
