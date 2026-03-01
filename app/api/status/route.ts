@@ -7,7 +7,6 @@ export async function GET() {
     status: "ok",
     owner: "RejectModders",
     site: "rejectmodders.is-a.dev",
-    built_with: ["Next.js 15", "Tailwind CSS", "Framer Motion", "TypeScript"],
     build_time: BUILD_TIME,
     timestamp: new Date().toISOString(),
     uptime_since: BUILD_TIME,

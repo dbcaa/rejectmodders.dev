@@ -40,7 +40,8 @@ export function ContactSection() {
   const links = [
     { href: "https://github.com/RejectModders", icon: Github, label: "Follow on GitHub", primary: true },
     { href: "https://vulnradar.dev", icon: ExternalLink, label: "Visit vulnradar.dev", primary: false },
-    { href: "mailto:contact@rejectmodders.is-a.dev", icon: Mail, label: "Get in Touch", primary: false },
+    // email is intentionally obfuscated — assembled at runtime to deter scrapers
+    { href: ["rejectmodders", "vulnradar.dev"].join("@"), icon: Mail, label: "Get in Touch", primary: false, isEmail: true },
   ]
 
   const statItems = stats ? [
@@ -123,25 +124,44 @@ export function ContactSection() {
 
           {/* Links — CSS transitions for hover, Framer only for entrance */}
           <div className="flex flex-col gap-3">
-            {links.map((link, i) => (
-              <motion.a key={link.label}
-                initial={{ opacity: 0, y: 8 }} animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: DUR, delay: 0.22 + i * 0.07, ease: EASE }}
-                whileTap={{ scale: 0.97 }}
-                href={link.href}
-                target={link.href.startsWith("mailto") ? undefined : "_blank"}
-                rel={link.href.startsWith("mailto") ? undefined : "noopener noreferrer"}
-                className={`group card-hover flex items-center justify-center gap-2 rounded-lg px-6 py-3 font-medium border ${
-                  link.primary
-                    ? "border-primary bg-primary text-primary-foreground glow-red hover:brightness-110"
-                    : "border-border bg-secondary text-secondary-foreground hover:bg-muted"
-                }`}
-              >
-                <link.icon className="h-5 w-5 shrink-0" />
-                {link.label}
-                <ArrowRight className="ml-auto h-4 w-4 translate-x-0 opacity-0 transition-all duration-150 group-hover:translate-x-1 group-hover:opacity-100" />
-              </motion.a>
-            ))}
+            {links.map((link, i) => {
+              const sharedClass = `group card-hover flex items-center justify-center gap-2 rounded-lg px-6 py-3 font-medium border ${
+                link.primary
+                  ? "border-primary bg-primary text-primary-foreground glow-red hover:brightness-110"
+                  : "border-border bg-secondary text-secondary-foreground hover:bg-muted"
+              }`
+              const inner = (
+                <>
+                  <link.icon className="h-5 w-5 shrink-0" />
+                  {link.label}
+                  <ArrowRight className="ml-auto h-4 w-4 translate-x-0 opacity-0 transition-all duration-150 group-hover:translate-x-1 group-hover:opacity-100" />
+                </>
+              )
+              return (
+                <motion.div key={link.label}
+                  initial={{ opacity: 0, y: 8 }} animate={isInView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: DUR, delay: 0.22 + i * 0.07, ease: EASE }}
+                >
+                  {link.isEmail ? (
+                    <button
+                      onClick={() => { window.location.href = `mailto:${link.href}` }}
+                      className={`w-full cursor-pointer ${sharedClass}`}
+                    >
+                      {inner}
+                    </button>
+                  ) : (
+                    <a
+                      href={link.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={sharedClass}
+                    >
+                      {inner}
+                    </a>
+                  )}
+                </motion.div>
+              )
+            })}
           </div>
         </motion.div>
       </div>

@@ -35,7 +35,6 @@ const socialLinks = [
   { key: "twitter" as const, icon: Twitter, label: "Twitter", getUrl: (v: string) => v.startsWith("http") ? v : `https://x.com/${v}` },
   { key: "website" as const, icon: Globe, label: "Website", getUrl: (v: string) => v.startsWith("http") ? v : `https://${v}` },
   { key: "youtube" as const, icon: Youtube, label: "YouTube", getUrl: (v: string) => v.startsWith("http") ? v : `https://youtube.com/@${v}` },
-  { key: "email" as const, icon: Mail, label: "Email", getUrl: (v: string) => v.startsWith("mailto:") ? v : `mailto:${v}` },
 ]
 
 function getAvatar(friend: Friend): string | null {
@@ -250,6 +249,20 @@ export function FriendsPageContent({ friends }: { friends: Friend[] }) {
                         </a>
                       )
                     })}
+                    {/* Email — assembled at runtime, never in HTML source */}
+                    {friend.email && (
+                      <button
+                        onClick={() => {
+                          const addr = friend.email!.startsWith("mailto:") ? friend.email!.slice(7) : friend.email!
+                          window.location.href = `mailto:${addr}`
+                        }}
+                        className="flex items-center gap-1 rounded-md border border-border bg-secondary px-2 py-1 font-mono text-[10px] text-muted-foreground transition-all duration-150 hover:-translate-y-0.5 hover:border-primary/30 hover:text-primary"
+                        title="Email"
+                      >
+                        <Mail className="h-3 w-3" />
+                        Email
+                      </button>
+                    )}
                     {!friend.discord && !friend.github && !friend.twitter && !friend.website && !friend.youtube && !friend.email && (
                       <span className="font-mono text-[10px] text-muted-foreground/40">No links</span>
                     )}
