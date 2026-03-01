@@ -73,6 +73,41 @@ export function FriendsPageContent({ friends }: { friends: Friend[] }) {
           </motion.p>
         </motion.div>
 
+        {/* PR callout */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: DUR, delay: 0.52, ease: EASE }}
+          className="mb-12"
+        >
+          <div className="relative overflow-hidden rounded-2xl border border-border bg-card p-6 md:p-8">
+            <div
+              className="pointer-events-none absolute inset-0 opacity-[0.035]"
+              style={{ background: "radial-gradient(ellipse at 70% 50%, oklch(0.58 0.2 15), transparent 65%)" }}
+            />
+            <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex flex-col gap-1.5">
+                <span className="font-mono text-xs text-primary">{'// wanna be here?'}</span>
+                <h2 className="text-xl font-bold text-foreground md:text-2xl">Think you belong on this list?</h2>
+                <p className="max-w-md text-sm leading-relaxed text-muted-foreground">
+                  If we know each other, open a pull request on the repo and add yourself to{" "}
+                  <code className="rounded bg-secondary px-1 py-0.5 font-mono text-xs text-primary">data/friends.json</code>.
+                  There&apos;s a README with all the instructions.
+                </p>
+              </div>
+              <a
+                href="https://github.com/RejectModders/rejectmodders.is-a.dev"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex shrink-0 items-center gap-2 rounded-lg border border-primary/40 bg-primary/10 px-5 py-2.5 font-mono text-sm text-primary transition-all duration-150 hover:-translate-y-0.5 hover:bg-primary/20 hover:border-primary/60"
+              >
+                <GitHubIcon className="h-4 w-4" />
+                Open a PR
+              </a>
+            </div>
+          </div>
+        </motion.div>
+
         {/* GF Section */}
         {gf && (
           <motion.div
@@ -238,40 +273,6 @@ export function FriendsPageContent({ friends }: { friends: Friend[] }) {
           </motion.div>
         )}
 
-        {/* PR callout */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: DUR, delay: 0.65, ease: EASE }}
-          className="mt-16"
-        >
-          <div className="relative overflow-hidden rounded-2xl border border-border bg-card p-6 md:p-8">
-            <div
-              className="pointer-events-none absolute inset-0 opacity-[0.035]"
-              style={{ background: "radial-gradient(ellipse at 70% 50%, oklch(0.58 0.2 15), transparent 65%)" }}
-            />
-            <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex flex-col gap-1.5">
-                <span className="font-mono text-xs text-primary">{'// wanna be here?'}</span>
-                <h2 className="text-xl font-bold text-foreground md:text-2xl">Think you belong on this list?</h2>
-                <p className="max-w-md text-sm leading-relaxed text-muted-foreground">
-                  If we know each other, open a pull request on the repo and add yourself to{" "}
-                  <code className="rounded bg-secondary px-1 py-0.5 font-mono text-xs text-primary">data/friends.json</code>.
-                  There&apos;s a README with all the instructions.
-                </p>
-              </div>
-              <a
-                href="https://github.com/RejectModders/rejectmodders.is-a.dev"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex shrink-0 items-center gap-2 rounded-lg border border-primary/40 bg-primary/10 px-5 py-2.5 font-mono text-sm text-primary transition-all duration-150 hover:-translate-y-0.5 hover:bg-primary/20 hover:border-primary/60"
-              >
-                <GitHubIcon className="h-4 w-4" />
-                Open a PR
-              </a>
-            </div>
-          </div>
-        </motion.div>
       </div>
     </div>
   )
