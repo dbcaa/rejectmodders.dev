@@ -1,0 +1,140 @@
+"use client"
+
+import { useState, useEffect } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { Menu, X } from "lucide-react"
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import { NavNowPlaying } from "@/components/nav-now-playing"
+
+const navLinks = [
+  { label: "Home", href: "/" },
+  { label: "About", href: "/about" },
+  { label: "Projects", href: "/projects" },
+  { label: "Friends", href: "/friends" },
+  { label: "Spotify", href: "/spotify" },
+  { label: "Contact", href: "/#contact" },
+]
+
+export function Navbar() {
+  const [scrolled, setScrolled] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
+  const pathname = usePathname()
+
+  useEffect(() => {
+    const handleScroll = () => setScrolled(window.scrollY > 50)
+    window.addEventListener("scroll", handleScroll)
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
+
+  useEffect(() => {
+    setMobileOpen(false)
+  }, [pathname])
+
+  return (
+    <>
+      {/* Entire header + contents animate in as one unit — no stagger, no delay */}
+      <motion.header
+        initial={{ y: -64, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.35, ease: [0.215, 0.61, 0.355, 1] }}
+        style={{ willChange: "transform, opacity" }}
+        className={`fixed inset-x-0 top-0 z-40 transition-all duration-300 ${
+          scrolled
+            ? "border-b border-border bg-background/80 backdrop-blur-xl"
+            : "bg-transparent"
+        }`}
+      >
+        <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
+          {/* Logo */}
+          <Link href="/" className="group font-mono text-sm font-bold text-foreground">
+            {"<"}
+            <span className="text-primary transition-colors group-hover:text-foreground">RM</span>
+            {" />"}
+          </Link>
+
+          {/* Desktop links — all appear together, no stagger */}
+          <div className="hidden items-center gap-8 md:flex">
+            {navLinks.map((link) => {
+              const isActive = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href.replace("/#", "/"))
+              return (
+                <Link
+                  key={link.label}
+                  href={link.href}
+                  className={`animated-underline font-mono text-sm transition-colors hover:text-primary ${
+                    isActive ? "text-primary" : "text-muted-foreground"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              )
+            })}
+            <NavNowPlaying />
+            <a
+              href="https://github.com/RejectModders"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-md border border-primary/30 bg-primary/10 px-4 py-1.5 font-mono text-sm text-primary transition-all hover:bg-primary/20 hover:shadow-[0_0_15px_oklch(0.58_0.2_15/0.2)]"
+            >
+              GitHub
+            </a>
+          </div>
+
+          {/* Mobile toggle */}
+          <button
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className="text-foreground md:hidden"
+            aria-label="Toggle menu"
+          >
+            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </nav>
+      </motion.header>
+
+      {/* Mobile menu */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+              className="fixed inset-0 z-30 bg-background/60 backdrop-blur-sm md:hidden"
+              onClick={() => setMobileOpen(false)}
+            />
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.15, ease: "easeOut" }}
+              className="fixed inset-x-0 top-15 z-40 border-b border-border bg-background/95 backdrop-blur-xl md:hidden"
+            >
+              <div className="flex flex-col gap-1 px-4 py-4">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.label}
+                    href={link.href}
+                    onClick={() => setMobileOpen(false)}
+                    className="block rounded-md px-3 py-2.5 font-mono text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+                <a
+                  href="https://github.com/RejectModders"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setMobileOpen(false)}
+                  className="mt-2 block rounded-md bg-primary px-3 py-2.5 text-center font-mono text-sm text-primary-foreground"
+                >
+                  GitHub
+                </a>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </>
+  )
+}
