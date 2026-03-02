@@ -194,26 +194,22 @@ export function IntroStrip() {
         <div className="mx-auto max-w-6xl px-4">
           <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
             {[
-              { icon: MapPin,  label: "Based in",       value: "Missouri, USA",           mono: false },
-              { icon: Code2,   label: "Primary stack",  value: "Python · C/C++ · JS/TS",  mono: true  },
-              { icon: Shield,  label: "Focus area",     value: "Cybersecurity & tooling",  mono: false },
-              { icon: Zap,     label: "Status",         value: "Available for hire",       mono: true, highlight: true },
-            ].map((card, i) => (
+            { icon: MapPin,  label: "Based in",       value: "Missouri, USA",          mono: false },
+              { icon: Code2,   label: "Primary stack",  value: "Python · C/C++ · JS/TS", mono: true  },
+              { icon: Shield,  label: "Focus area",     value: "Cybersecurity & tooling", mono: false },
+              { icon: Zap,     label: "Status",         value: "Available for hire",      mono: true  },
+            ].map((card) => (
               <motion.div
                 key={card.label}
                 initial={{ opacity: 0, y: 16 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: DUR, delay: i * 0.07, ease: EASE }}
-                className={`flex items-start gap-3 rounded-xl border bg-card p-4 transition-all duration-150 hover:-translate-y-0.5 ${
-                  (card as {highlight?:boolean}).highlight
-                    ? "border-primary/40 bg-primary/5 hover:border-primary/60"
-                    : "border-border hover:border-primary/30"
-                }`}
+                transition={{ duration: DUR, delay: 0.05, ease: EASE }}
+                className="flex items-start gap-3 rounded-xl border border-primary/40 bg-primary/5 p-4 transition-all duration-150 hover:-translate-y-0.5 hover:border-primary/60"
               >
-                <card.icon className={`mt-0.5 h-4 w-4 shrink-0 ${(card as {highlight?:boolean}).highlight ? "text-primary" : "text-muted-foreground"}`} />
+                <card.icon className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
                 <div className="min-w-0">
                   <p className="text-[10px] uppercase tracking-wider text-muted-foreground">{card.label}</p>
-                  <p className={`mt-0.5 truncate text-sm font-medium ${card.mono ? "font-mono" : ""} ${(card as {highlight?:boolean}).highlight ? "text-primary" : "text-foreground"}`}>
+                  <p className={`mt-0.5 truncate text-sm font-medium text-primary ${card.mono ? "font-mono" : ""}`}>
                     {card.value}
                   </p>
                 </div>

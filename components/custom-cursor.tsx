@@ -117,16 +117,18 @@ function drawStyle1(p: DrawCtx) {
 
   tickSparks(p); tickRings(p); tickParticles(p)
 
-  // ── comet tail - each segment tinted by speed
+  // comet tail - always visible, brighter when moving fast
   for (let i = 0; i < TAIL_LEN - 1; i++) {
     const ai = (tailHead + i) % TAIL_LEN
     const bi = (tailHead + i + 1) % TAIL_LEN
     const t  = i / (TAIL_LEN - 1)
     const segSpeed = tail[ai].speed
-    const a = t * t * 0.55 * clamp(segSpeed / 10, 0, 1) * (1 - typingBlend)
-    if (a < 0.005) continue
+    // base alpha from position in tail, boosted by speed — always at least faintly visible
+    const speedBoost = clamp(segSpeed / 8, 0, 1)
+    const a = t * t * (0.18 + speedBoost * 0.45) * (1 - typingBlend)
+    if (a < 0.004) continue
     ctx.beginPath(); ctx.moveTo(tail[ai].x, tail[ai].y); ctx.lineTo(tail[bi].x, tail[bi].y)
-    ctx.strokeStyle = rgb(a); ctx.lineWidth = lerp(0.3, 2.4, t); ctx.lineCap = "round"; ctx.stroke()
+    ctx.strokeStyle = rgb(a); ctx.lineWidth = lerp(0.4, 2.8, t); ctx.lineCap = "round"; ctx.stroke()
   }
 
   // ── outer ring - breathes + stretches with speed
