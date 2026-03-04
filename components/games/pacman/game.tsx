@@ -35,15 +35,15 @@ export function PacmanGame({ primary, onBack }: { primary: string; onBack: () =>
     map:MAP_TEMPLATE.map(r=>[...r]),
     pac:{x:9*CW+CW/2,y:16*CW+CW/2,dir:{x:0,y:0},nextDir:{x:0,y:0},mouth:0,mouthOpen:true},
     ghosts:[
-      {x:9*CW+CW/2,y:9*CW+CW/2,dir:{x:1,y:0},scared:0,color:GHOST_COLORS[0]},
-      {x:9*CW+CW/2,y:10*CW+CW/2,dir:{x:-1,y:0},scared:0,color:GHOST_COLORS[1]},
-      {x:8*CW+CW/2,y:9*CW+CW/2,dir:{x:0,y:1},scared:0,color:GHOST_COLORS[2]},
-      {x:10*CW+CW/2,y:9*CW+CW/2,dir:{x:0,y:-1},scared:0,color:GHOST_COLORS[3]},
+      {x:9*CW+CW/2,y:10*CW+CW/2,dir:{x:1,y:0},scared:0,color:GHOST_COLORS[0],released:true,releaseTimer:0},
+      {x:9*CW+CW/2,y:10*CW+CW/2,dir:{x:-1,y:0},scared:0,color:GHOST_COLORS[1],released:false,releaseTimer:20},
+      {x:9*CW+CW/2,y:10*CW+CW/2,dir:{x:0,y:1},scared:0,color:GHOST_COLORS[2],released:false,releaseTimer:40},
+      {x:9*CW+CW/2,y:10*CW+CW/2,dir:{x:0,y:-1},scared:0,color:GHOST_COLORS[3],released:false,releaseTimer:60},
     ],
     score:0,lives:3,hs:0,started:false,raf:0,
     keys:new Set<string>(),lastTime:0,
     state:"idle" as "idle"|"playing"|"dead"|"win",
-    deathTimer:0,
+    deathTimer:0,dotsEaten:0,
   })
   const [disp,setDisp]=useState({score:0,lives:3,hs:0,state:"idle" as "idle"|"playing"|"dead"|"win"})
 
@@ -52,12 +52,12 @@ export function PacmanGame({ primary, onBack }: { primary: string; onBack: () =>
     g.map=MAP_TEMPLATE.map(r=>[...r])
     g.pac={x:9*CW+CW/2,y:16*CW+CW/2,dir:{x:0,y:0},nextDir:{x:0,y:0},mouth:0,mouthOpen:true}
     g.ghosts=[
-      {x:9*CW+CW/2,y:9*CW+CW/2,dir:{x:1,y:0},scared:0,color:GHOST_COLORS[0]},
-      {x:9*CW+CW/2,y:10*CW+CW/2,dir:{x:-1,y:0},scared:0,color:GHOST_COLORS[1]},
-      {x:8*CW+CW/2,y:9*CW+CW/2,dir:{x:0,y:1},scared:0,color:GHOST_COLORS[2]},
-      {x:10*CW+CW/2,y:9*CW+CW/2,dir:{x:0,y:-1},scared:0,color:GHOST_COLORS[3]},
+      {x:9*CW+CW/2,y:10*CW+CW/2,dir:{x:1,y:0},scared:0,color:GHOST_COLORS[0],released:true,releaseTimer:0},
+      {x:9*CW+CW/2,y:10*CW+CW/2,dir:{x:-1,y:0},scared:0,color:GHOST_COLORS[1],released:false,releaseTimer:20},
+      {x:9*CW+CW/2,y:10*CW+CW/2,dir:{x:0,y:1},scared:0,color:GHOST_COLORS[2],released:false,releaseTimer:40},
+      {x:9*CW+CW/2,y:10*CW+CW/2,dir:{x:0,y:-1},scared:0,color:GHOST_COLORS[3],released:false,releaseTimer:60},
     ]
-    g.score=0;g.lives=3;g.started=false;g.hs=loadHS()["pacman"]??0;g.lastTime=0
+    g.score=0;g.lives=3;g.started=false;g.hs=loadHS()["pacman"]??0;g.lastTime=0;g.dotsEaten=0
     g.state="idle";g.deathTimer=0
     setDisp({score:0,lives:3,hs:g.hs,state:"idle"})
   },[])
@@ -107,32 +107,92 @@ export function PacmanGame({ primary, onBack }: { primary: string; onBack: () =>
           setDisp(d=>({...d,state:"win",score:g.score,hs:g.hs}))
         }
 
+        // Ghost release timers
+        for(const gh of g.ghosts){
+          if(!gh.released && gh.releaseTimer <= 0){
+            gh.released = true
+          } else if(!gh.released && gh.releaseTimer > 0){
+            gh.releaseTimer -= dt
+          }
+        }
+
         // Ghost AI
         for(const gh of g.ghosts){
           if(gh.scared>0)gh.scared-=dt
           const atCenter=(Math.abs(gh.x%CW-CW/2)<1.5)&&(Math.abs(gh.y%CW-CW/2)<1.5)
-          if(atCenter||!canMove(gh.x,gh.y,gh.dir.x,gh.dir.y,GHOST_SPD)){
-            const opts=[{x:1,y:0},{x:-1,y:0},{x:0,y:1},{x:0,y:-1}]
-            const valid=opts.filter(d=>!(d.x===-gh.dir.x&&d.y===-gh.dir.y)&&canMove(gh.x,gh.y,d.x,d.y,GHOST_SPD))
-            const fallback=opts.filter(d=>canMove(gh.x,gh.y,d.x,d.y,GHOST_SPD))
-            const choices=valid.length?valid:fallback
-            if(choices.length){
-              if(gh.scared>0){
-                gh.dir=choices[Math.floor(Math.random()*choices.length)]
-              } else {
-                gh.dir=Math.random()<0.75
+
+          if(!gh.released){
+            // Still in house waiting - don't move at all
+            continue
+          } else if(gh.y > 7*CW + CW/2){
+            // Still in escape zone - navigate upward and center
+            const exitX = 9*CW + CW/2
+            const distToCenter = Math.abs(gh.x - exitX)
+
+            // If not centered, move toward center first
+            if(distToCenter > 3){
+              const moveToCenter = gh.x < exitX ? 1 : -1
+              if(canMove(gh.x, gh.y, moveToCenter, 0, GHOST_SPD)){
+                gh.x += moveToCenter * GHOST_SPD
+              } else if(canMove(gh.x, gh.y, 0, -1, GHOST_SPD)){
+                gh.y -= GHOST_SPD
+              }
+            } else {
+              // Centered - move straight up
+              if(canMove(gh.x, gh.y, 0, -1, GHOST_SPD)){
+                gh.y -= GHOST_SPD
+              } else if(canMove(gh.x, gh.y, -1, 0, GHOST_SPD)){
+                gh.x -= GHOST_SPD
+              } else if(canMove(gh.x, gh.y, 1, 0, GHOST_SPD)){
+                gh.x += GHOST_SPD
+              }
+            }
+          } else {
+            // Fully escaped - use normal hunting AI
+            if(atCenter||!canMove(gh.x,gh.y,gh.dir.x,gh.dir.y,GHOST_SPD)){
+              const opts=[{x:1,y:0},{x:-1,y:0},{x:0,y:1},{x:0,y:-1}]
+              const valid=opts.filter(d=>!(d.x===-gh.dir.x&&d.y===-gh.dir.y)&&canMove(gh.x,gh.y,d.x,d.y,GHOST_SPD))
+              const fallback=opts.filter(d=>canMove(gh.x,gh.y,d.x,d.y,GHOST_SPD))
+              const choices=valid.length?valid:fallback
+              if(choices.length){
+                // Randomly pick direction - 50% Pac-Man, 50% random spread
+                const target = Math.random()<0.5
                   ? choices.sort((a,b)=>Math.hypot(gh.x+a.x*CW-p.x,gh.y+a.y*CW-p.y)-Math.hypot(gh.x+b.x*CW-p.x,gh.y+b.y*CW-p.y))[0]
                   : choices[Math.floor(Math.random()*choices.length)]
+                gh.dir = target
+              }
+            }
+
+            // Periodic random direction changes to make them spread out more
+            if(Math.random() < 0.02){
+              const opts=[{x:1,y:0},{x:-1,y:0},{x:0,y:1},{x:0,y:-1}]
+              const valid=opts.filter(d=>canMove(gh.x,gh.y,d.x,d.y,GHOST_SPD))
+              if(valid.length > 0) gh.dir = valid[Math.floor(Math.random()*valid.length)]
+            }
+
+            // Always move in current direction if possible
+            if(canMove(gh.x,gh.y,gh.dir.x,gh.dir.y,GHOST_SPD)){
+              gh.x+=gh.dir.x*GHOST_SPD
+              gh.y+=gh.dir.y*GHOST_SPD
+            }
+
+            // Collision avoidance between escaped ghosts
+            for(const other of g.ghosts){
+              if(other===gh || other.y > 7*CW + CW/2) continue
+              const dist=Math.hypot(gh.x-other.x,gh.y-other.y)
+              if(dist<CW){
+                const angle=Math.atan2(gh.y-other.y,gh.x-other.x)
+                gh.x+=Math.cos(angle)*1
+                gh.y+=Math.sin(angle)*1
               }
             }
           }
-          if(canMove(gh.x,gh.y,gh.dir.x,gh.dir.y,GHOST_SPD)){gh.x+=gh.dir.x*GHOST_SPD;gh.y+=gh.dir.y*GHOST_SPD}
 
           // Collision
           if(Math.hypot(gh.x-p.x,gh.y-p.y)<CW*0.62){
             if(gh.scared>0){
               gh.scared=0;g.score+=200
-              gh.x=9*CW+CW/2;gh.y=9*CW+CW/2
+              gh.x=9*CW+CW/2;gh.y=10*CW+CW/2;gh.released=false;gh.releaseTimer=30
               setDisp(d=>({...d,score:g.score}))
             } else {
               g.lives--

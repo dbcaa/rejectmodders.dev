@@ -172,15 +172,18 @@ export function SnakeGame({ primary, onBack }: { primary: string; onBack: () => 
       ctx.globalAlpha = 1
 
       // Particles
-      s.particles = s.particles.filter(p => p.life > 0)
       for (const p of s.particles) {
         p.x += p.vx; p.y += p.vy
         p.vy += 0.08 // slight gravity
         p.life -= 1 / (p.maxLife * 60)
-        ctx.globalAlpha = Math.max(0, p.life)
-        ctx.fillStyle = p.color
-        ctx.beginPath(); ctx.arc(p.x, p.y, 3 * p.life, 0, Math.PI * 2); ctx.fill()
+        if (p.life > 0) {
+          ctx.globalAlpha = Math.max(0, p.life)
+          ctx.fillStyle = p.color
+          const radius = Math.max(0, 3 * p.life)
+          ctx.beginPath(); ctx.arc(p.x, p.y, radius, 0, Math.PI * 2); ctx.fill()
+        }
       }
+      s.particles = s.particles.filter(p => p.life > 0)
       ctx.globalAlpha = 1
 
       // Overlays
