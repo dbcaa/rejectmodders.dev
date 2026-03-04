@@ -2,9 +2,9 @@
 
 import { useState, useEffect, useRef, ComponentType, useCallback } from "react"
 import dynamic from "next/dynamic"
-import { motion, AnimatePresence } from "framer-motion"
+import { motion } from "framer-motion"
 import { useRouter } from "next/navigation"
-import { Trophy, Play, ChevronDown, Gamepad2 } from "lucide-react"
+import { Trophy, Play, Gamepad2 } from "lucide-react"
 import { loadHS } from "./games/helpers"
 
 // Previews – loaded dynamically so they never block the main thread
@@ -42,13 +42,13 @@ const BrickBuilderPreview  = dynamic(() => import("./games/brick-builder/preview
 
 type Category = "all" | "arcade" | "puzzle" | "card" | "word" | "strategy"
 
-const CATEGORIES: { id: Category; label: string; icon: string }[] = [
-  { id: "all",      label: "All",           icon: "◈" },
-  { id: "arcade",   label: "Arcade",        icon: "▶" },
-  { id: "puzzle",   label: "Puzzle",        icon: "◧" },
-  { id: "card",     label: "Card & Dice",   icon: "◆" },
-  { id: "word",     label: "Word & Brain",  icon: "A" },
-  { id: "strategy", label: "Strategy",      icon: "♟" },
+const CATEGORIES: { id: Category; label: string }[] = [
+  { id: "all",      label: "All" },
+  { id: "arcade",   label: "Arcade" },
+  { id: "puzzle",   label: "Puzzle" },
+  { id: "card",     label: "Card & Dice" },
+  { id: "word",     label: "Word & Brain" },
+  { id: "strategy", label: "Strategy" },
 ]
 
 const GAMES = [
@@ -65,7 +65,7 @@ const GAMES = [
   // ── Puzzle ──
   { id: "2048",          label: "2048",            desc: "Merge tiles to reach 2048.",                   controls: "arrows / swipe",               cat: "puzzle"   as Category, Preview: Game2048Preview },
   { id: "minesweeper",   label: "Minesweeper",     desc: "Reveal all safe cells, flag the mines.",       controls: "click / right-click",          cat: "puzzle"   as Category, Preview: MinesweeperPreview },
-  { id: "sudoku",        label: "Sudoku",          desc: "Fill the 9×9 grid with 1–9.",                  controls: "click + type / arrows",        cat: "puzzle"   as Category, Preview: SudokuPreview },
+  { id: "sudoku",        label: "Sudoku",          desc: "Fill the 9x9 grid with 1-9.",                  controls: "click + type / arrows",        cat: "puzzle"   as Category, Preview: SudokuPreview },
   { id: "lights-out",    label: "Lights Out",      desc: "Toggle cells to turn every light off.",        controls: "click / tap",                  cat: "puzzle"   as Category, Preview: LightsOutPreview },
   { id: "nonogram",      label: "Nonogram",        desc: "Fill cells using row and column clues.",       controls: "left fill · right X",          cat: "puzzle"   as Category, Preview: NonogramPreview },
   { id: "color-flood",   label: "Color Flood",     desc: "Flood the board with one color in 22 moves.", controls: "click colors",                 cat: "puzzle"   as Category, Preview: ColorFloodPreview },
@@ -90,19 +90,16 @@ const GAMES = [
   { id: "tic-tac-toe",   label: "Tic-Tac-Toe",    desc: "Classic X vs O — beat the unbeatable AI.",     controls: "click cell",                  cat: "strategy" as Category, Preview: TicTacToePreview },
 ]
 
-/** Renders children only once the element scrolls into view */
+/** Renders preview only once the element scrolls into view (300px margin) */
 function LazyPreview({ Preview, id }: { Preview: ComponentType; id: string }) {
   const ref = useRef<HTMLDivElement>(null)
   const [visible, setVisible] = useState(false)
 
   useEffect(() => {
     const el = ref.current; if (!el) return
-    // If already in viewport on mount, show immediately
     const obs = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) { setVisible(true); obs.disconnect() }
-      },
-      { rootMargin: "300px" }
+      ([entry]) => { if (entry.isIntersecting) { setVisible(true); obs.disconnect() } },
+      { rootMargin: "400px" }
     )
     obs.observe(el)
     return () => obs.disconnect()
@@ -114,45 +111,40 @@ function LazyPreview({ Preview, id }: { Preview: ComponentType; id: string }) {
         <Preview />
       ) : (
         <div className="w-full h-full bg-zinc-950 flex items-center justify-center">
-          <div className="w-5 h-5 rounded-full border-2 border-primary/30 border-t-primary animate-spin" />
+          <div className="w-4 h-4 rounded-full border-2 border-primary/20 border-t-primary/70 animate-spin" />
         </div>
       )}
     </div>
   )
 }
 
-const CAT_MAP = Object.fromEntries(CATEGORIES.map(c => [c.id, c]))
-
 export function GamesPageContent() {
   const router = useRouter()
   const [scores, setScores] = useState<Record<string, number>>({})
   const [activeCategory, setActiveCategory] = useState<Category>("all")
   const [visibleCount, setVisibleCount] = useState(12)
-  const [hoveredId, setHoveredId] = useState<string | null>(null)
+  const [hovered, setHovered] = useState<string | null>(null)
 
   useEffect(() => { setScores(loadHS()) }, [])
 
   const filtered = activeCategory === "all" ? GAMES : GAMES.filter(g => g.cat === activeCategory)
-  const visibleGames = filtered.slice(0, visibleCount)
+  const shown = filtered.slice(0, visibleCount)
   const hasMore = visibleCount < filtered.length
 
-  const handleCategoryChange = useCallback((cat: Category) => {
+  const changeCategory = useCallback((cat: Category) => {
     setActiveCategory(cat)
     setVisibleCount(12)
   }, [])
-
-  const categoryCount = (cat: Category) =>
-    cat === "all" ? GAMES.length : GAMES.filter(g => g.cat === cat).length
 
   return (
     <main className="min-h-screen pt-24 pb-20 px-4">
       <div className="mx-auto max-w-6xl">
 
-        {/* ── Header ── */}
+        {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, ease: [0.215, 0.61, 0.355, 1] }}
+          transition={{ duration: 0.35, ease: [0.215, 0.61, 0.355, 1] }}
           className="mb-10 text-center"
         >
           <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full border border-primary/20 bg-primary/5">
@@ -167,127 +159,119 @@ export function GamesPageContent() {
           </p>
         </motion.div>
 
-        {/* ── Category filter bar ── */}
+        {/* Category tabs */}
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
+          initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35, delay: 0.08, ease: [0.215, 0.61, 0.355, 1] }}
+          transition={{ duration: 0.3, delay: 0.08 }}
           className="mb-10 flex flex-wrap gap-2 justify-center"
         >
           {CATEGORIES.map(cat => {
             const isActive = activeCategory === cat.id
+            const count = cat.id === "all" ? GAMES.length : GAMES.filter(g => g.cat === cat.id).length
             return (
               <button
                 key={cat.id}
-                onClick={() => handleCategoryChange(cat.id)}
-                className={`
-                  flex items-center gap-2 px-4 py-2 rounded-full font-mono text-xs font-semibold
-                  border transition-all duration-200 select-none
-                  ${isActive
-                    ? "bg-primary text-primary-foreground border-primary shadow-[0_0_16px_color-mix(in_oklch,var(--primary)_30%,transparent)]"
-                    : "bg-transparent text-muted-foreground border-border hover:border-primary/40 hover:text-foreground"
-                  }
-                `}
+                onClick={() => changeCategory(cat.id)}
+                className={[
+                  "relative flex items-center gap-2 px-4 py-2 rounded-full font-mono text-xs font-semibold",
+                  "border transition-all duration-200 select-none",
+                  isActive
+                    ? "bg-primary text-primary-foreground border-primary shadow-[0_0_18px_color-mix(in_oklch,var(--primary)_28%,transparent)]"
+                    : "bg-transparent text-muted-foreground border-border hover:border-primary/40 hover:text-foreground",
+                ].join(" ")}
               >
-                <span className="font-mono">{cat.icon}</span>
-                <span>{cat.label}</span>
-                <span className="opacity-50 text-[10px]">({categoryCount(cat.id)})</span>
+                {cat.label}
+                <span className={["text-[10px] tabular-nums", isActive ? "opacity-70" : "opacity-40"].join(" ")}>
+                  {count}
+                </span>
               </button>
             )
           })}
         </motion.div>
 
-        {/* ── Game grid ── */}
+        {/* Grid */}
         {filtered.length === 0 ? (
-          <div className="text-center py-20 font-mono text-muted-foreground">
+          <div className="text-center py-20 font-mono text-muted-foreground text-sm">
             no games in this category yet
           </div>
         ) : (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-              <AnimatePresence initial={false}>
-                {visibleGames.map(({ id, label, desc, controls, Preview, cat }, i) => {
-                  const hs = scores[id]
-                  const catInfo = CAT_MAP[cat]
-                  return (
-                    <motion.div
-                      key={id}
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0.95 }}
-                      transition={{ duration: 0.2, delay: Math.min(i * 0.03, 0.3) }}
-                      onMouseEnter={() => setHoveredId(id)}
-                      onMouseLeave={() => setHoveredId(null)}
-                      onClick={() => router.push(`/games/${id}`)}
-                      className="group relative cursor-pointer rounded-2xl border border-border bg-card overflow-hidden transition-all duration-250 hover:border-primary/40 hover:shadow-[0_4px_24px_color-mix(in_oklch,var(--primary)_12%,transparent)] hover:-translate-y-0.5"
-                    >
-                      {/* Preview area */}
-                      <div className="relative w-full overflow-hidden bg-zinc-950" style={{ aspectRatio: "16/9" }}>
-                        <LazyPreview Preview={Preview} id={id} />
+              {shown.map(({ id, label, desc, controls, Preview, cat }, i) => {
+                const hs = scores[id]
+                return (
+                  <motion.div
+                    key={id}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.22, delay: Math.min(i * 0.025, 0.25), ease: "easeOut" }}
+                    onMouseEnter={() => setHovered(id)}
+                    onMouseLeave={() => setHovered(null)}
+                    onClick={() => router.push(`/games/${id}`)}
+                    className="group relative cursor-pointer rounded-2xl border border-border bg-card overflow-hidden
+                      transition-all duration-200 hover:border-primary/40 hover:-translate-y-0.5
+                      hover:shadow-[0_4px_24px_color-mix(in_oklch,var(--primary)_10%,transparent)]"
+                  >
+                    {/* Preview */}
+                    <div className="relative w-full overflow-hidden bg-zinc-950" style={{ aspectRatio: "16/9" }}>
+                      <LazyPreview Preview={Preview} id={id} />
 
-                        {/* Hover play overlay */}
-                        <motion.div
-                          initial={false}
-                          animate={{ opacity: hoveredId === id ? 1 : 0 }}
-                          transition={{ duration: 0.15 }}
-                          className="absolute inset-0 flex items-center justify-center bg-black/60 pointer-events-none"
-                        >
-                          <div className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground font-mono text-sm font-bold shadow-lg">
-                            <Play className="h-4 w-4 fill-current" />
-                            play
-                          </div>
-                        </motion.div>
+                      {/* Play overlay */}
+                      <div
+                        className="absolute inset-0 flex items-center justify-center bg-black/55
+                          transition-opacity duration-150"
+                        style={{ opacity: hovered === id ? 1 : 0, pointerEvents: "none" }}
+                      >
+                        <div className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground font-mono text-sm font-bold shadow-lg">
+                          <Play className="h-4 w-4 fill-current" />
+                          play
+                        </div>
+                      </div>
 
-                        {/* Category pill */}
-                        <div className="absolute top-2 right-2 pointer-events-none">
-                          <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-black/70 text-primary/90 border border-primary/20 backdrop-blur-sm">
-                            {catInfo?.icon} {catInfo?.label}
+                      {/* Category badge */}
+                      <div className="absolute top-2 right-2 pointer-events-none">
+                        <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-black/70 text-primary/80 border border-primary/20 backdrop-blur-sm">
+                          {cat}
+                        </span>
+                      </div>
+
+                      {/* High score badge */}
+                      {hs !== undefined && (
+                        <div className="absolute top-2 left-2 pointer-events-none">
+                          <span className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono bg-black/70 text-yellow-400/90 border border-yellow-400/20 backdrop-blur-sm">
+                            <Trophy className="h-2.5 w-2.5" />{hs}
                           </span>
                         </div>
+                      )}
+                    </div>
 
-                        {/* High score badge */}
-                        {hs !== undefined && (
-                          <div className="absolute top-2 left-2 pointer-events-none">
-                            <span className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono bg-black/70 text-yellow-400/90 border border-yellow-400/20 backdrop-blur-sm">
-                              <Trophy className="h-2.5 w-2.5" />{hs}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Card info */}
-                      <div className="p-4">
-                        <h2 className="font-mono font-bold text-sm text-foreground group-hover:text-primary transition-colors mb-1">
-                          {label}
-                        </h2>
-                        <p className="font-mono text-xs text-muted-foreground leading-relaxed mb-2">{desc}</p>
-                        <p className="font-mono text-[10px] text-muted-foreground/40 truncate">{controls}</p>
-                      </div>
-                    </motion.div>
-                  )
-                })}
-              </AnimatePresence>
+                    {/* Info */}
+                    <div className="p-4">
+                      <h2 className="font-mono font-bold text-sm text-foreground group-hover:text-primary transition-colors mb-1">
+                        {label}
+                      </h2>
+                      <p className="font-mono text-xs text-muted-foreground leading-relaxed mb-2">{desc}</p>
+                      <p className="font-mono text-[10px] text-muted-foreground/35 truncate">{controls}</p>
+                    </div>
+                  </motion.div>
+                )
+              })}
             </div>
 
-            {/* Load More */}
+            {/* Load more */}
             {hasMore && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.2 }}
-                className="flex justify-center mt-10"
-              >
+              <div className="flex justify-center mt-10">
                 <button
                   onClick={() => setVisibleCount(v => v + 12)}
                   className="flex items-center gap-2 px-8 py-3 rounded-xl font-mono text-sm font-semibold
                     border border-primary/30 text-primary hover:bg-primary/10 hover:border-primary/50
-                    transition-all duration-200 hover:shadow-[0_0_20px_color-mix(in_oklch,var(--primary)_15%,transparent)]"
+                    transition-all duration-200"
                 >
-                  <ChevronDown className="h-4 w-4" />
                   load {Math.min(12, filtered.length - visibleCount)} more
-                  <span className="opacity-50 text-xs">({filtered.length - visibleCount} remaining)</span>
+                  <span className="opacity-50 text-xs">({filtered.length - visibleCount} left)</span>
                 </button>
-              </motion.div>
+              </div>
             )}
           </>
         )}
