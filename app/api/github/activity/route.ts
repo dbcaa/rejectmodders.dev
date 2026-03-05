@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import { GITHUB_USERNAME, GITHUB_API_URL, CACHE_DURATION_API, CACHE_DURATION_API_STALE } from "@/config/constants"
 
 // Cache activity for 10 minutes (600 seconds) for fresh activity updates
-export const revalidate = CACHE_DURATION_API
+export const revalidate = 600
 
 const INTERESTING = ["PushEvent", "CreateEvent", "PullRequestEvent", "IssuesEvent", "WatchEvent"]
 

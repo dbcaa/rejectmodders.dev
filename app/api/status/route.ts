@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import { SITE_NAME, SITE_URL, CACHE_DURATION_API, CACHE_DURATION_API_STALE } from "@/config/constants"
 
 // Cache status for 10 minutes (600 seconds)
-export const revalidate = CACHE_DURATION_API
+export const revalidate = 600
 
 const BUILD_TIME = new Date().toISOString()
 

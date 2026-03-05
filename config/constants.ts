@@ -107,6 +107,8 @@ export const AVATAR_ALLOWED_HOSTS = [
   "spotify-recently-played-readme.vercel.app",
 ] as const
 
+export type AllowedHost = typeof AVATAR_ALLOWED_HOSTS[number]
+
 // ── Feature Flags ────────────────────────────────────────────────────────────
 export const FEATURES = {
   enableParticles: true,

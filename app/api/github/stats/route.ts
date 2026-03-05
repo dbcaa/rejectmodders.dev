@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { GITHUB_USERNAME, GITHUB_API_URL, CACHE_DURATION_PAGE, CACHE_DURATION_PAGE_MAX } from "@/config/constants"
 
-export const revalidate = CACHE_DURATION_PAGE
+export const revalidate = 0
 
 const ORGS = ["disutils", "vulnradar"]
 
