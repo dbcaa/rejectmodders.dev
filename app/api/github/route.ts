@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server"
+import { GITHUB_USERNAME, GITHUB_API_URL, CACHE_DURATION_PAGE, CACHE_DURATION_PAGE_MAX } from "@/config/constants"
 
-export const revalidate = 7200
+export const revalidate = CACHE_DURATION_PAGE
 
 const ORGS = ["disutils", "vulnradar"]
-const USER = "RejectModders"
 const SKIP = ["RejectModders", ".github", "LICENSE"]
 
 interface GHRepo { id: number; fork: boolean; archived: boolean; name: string }
@@ -11,7 +11,7 @@ interface GHRepo { id: number; fork: boolean; archived: boolean; name: string }
 async function fetchJSON(url: string): Promise<GHRepo[]> {
   const res = await fetch(url, {
     headers: { Accept: "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28" },
-    next: { revalidate: 7200, tags: ["github"] },
+    next: { revalidate: CACHE_DURATION_PAGE, tags: ["github"] },
   })
   if (!res.ok) return []
   return res.json()
@@ -20,8 +20,8 @@ async function fetchJSON(url: string): Promise<GHRepo[]> {
 export async function GET() {
   try {
     const results = await Promise.all([
-      fetchJSON(`https://api.github.com/users/${USER}/repos?sort=updated&per_page=100&type=public`),
-      ...ORGS.map(org => fetchJSON(`https://api.github.com/orgs/${org}/repos?sort=updated&per_page=100&type=public`)),
+      fetchJSON(`${GITHUB_API_URL}/users/${GITHUB_USERNAME}/repos?sort=updated&per_page=100&type=public`),
+      ...ORGS.map(org => fetchJSON(`${GITHUB_API_URL}/orgs/${org}/repos?sort=updated&per_page=100&type=public`)),
     ])
 
     const all: GHRepo[] = results.flat()
@@ -33,7 +33,7 @@ export async function GET() {
     })
 
     return NextResponse.json(unique, {
-      headers: { "Cache-Control": "public, s-maxage=7200, stale-while-revalidate=14400" },
+      headers: { "Cache-Control": `public, s-maxage=${CACHE_DURATION_PAGE}, stale-while-revalidate=${CACHE_DURATION_PAGE_MAX}` },
     })
   } catch {
     return NextResponse.json([], { status: 500 })

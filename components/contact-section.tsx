@@ -1,11 +1,12 @@
-﻿"use client"
+"use client"
 
 import { motion, useInView } from "framer-motion"
 import { useRef, useEffect, useState } from "react"
 import { Github, ExternalLink, Mail, MapPin, Users, BookOpen, ArrowRight } from "lucide-react"
+import { GITHUB_URL, GITHUB_USER_API, VULNRADAR_URL, getEmail, SITE_LOCATION, ANIMATION_EASE, ANIMATION_DURATION } from "@/config/constants"
 
-const EASE = [0.215, 0.61, 0.355, 1] as const
-const DUR  = 0.4
+const EASE = [0.25, 0.1, 0.25, 1] as const
+const DUR  = 0.25
 
 // Animated number counter
 function AnimatedNumber({ value, isInView }: { value: number; isInView: boolean }) {
@@ -33,15 +34,15 @@ export function ContactSection() {
   const [stats, setStats] = useState<GitHubStats | null>(null)
 
   useEffect(() => {
-    fetch("https://api.github.com/users/RejectModders")
+    fetch(GITHUB_USER_API)
       .then(r => r.json()).then(d => { if (d.public_repos !== undefined) setStats(d) }).catch(() => {})
   }, [])
 
   const links = [
-    { href: "https://github.com/RejectModders", icon: Github, label: "Follow on GitHub", primary: true },
-    { href: "https://vulnradar.dev", icon: ExternalLink, label: "Visit vulnradar.dev", primary: false },
+    { href: GITHUB_URL, icon: Github, label: "Follow on GitHub", primary: true },
+    { href: VULNRADAR_URL, icon: ExternalLink, label: "Visit vulnradar.dev", primary: false },
     // email is intentionally obfuscated - assembled at runtime to deter scrapers
-    { href: ["liam", "rejectmodders.dev"].join("@"), icon: Mail, label: "Get in Touch", primary: false, isEmail: true },
+    { href: getEmail(), icon: Mail, label: "Get in Touch", primary: false, isEmail: true },
   ]
 
   const statItems = stats ? [
@@ -59,7 +60,7 @@ export function ContactSection() {
       <div className="mx-auto max-w-4xl px-4">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }} animate={isInView ? { opacity: 1, y: 0 } : {}}
+          initial={{ opacity: 0, y: 10 }} animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: DUR, ease: EASE }}
           className="mb-10 text-center"
         >
@@ -67,7 +68,7 @@ export function ContactSection() {
           <h2 className="mt-1 text-3xl font-bold text-foreground md:text-4xl">{"Let's Work Together"}</h2>
           <motion.div
             initial={{ scaleX: 0 }} animate={isInView ? { scaleX: 1 } : {}}
-            transition={{ duration: DUR, delay: 0.08, ease: "easeOut" }} style={{ originX: 0.5 }}
+            transition={{ duration: 0.3, delay: 0.03, ease: "easeOut" }} style={{ originX: 0.5 }}
             className="mx-auto mt-2 h-1 w-16 rounded-full bg-primary"
           />
           <p className="mt-3 text-muted-foreground">Whether it's a project collab, security stuff, or you just want to chat, I'm usually around.</p>
@@ -75,8 +76,8 @@ export function ContactSection() {
 
         {/* Card */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }} animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: DUR, delay: 0.1, ease: EASE }}
+          initial={{ opacity: 0, y: 12 }} animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: DUR, delay: 0.05, ease: EASE }}
           className="card-hover relative mx-auto max-w-lg overflow-hidden rounded-xl border border-border bg-card p-8"
         >
           {/* Inner glow */}
@@ -97,7 +98,7 @@ export function ContactSection() {
             <div className="text-center">
               <h3 className="text-xl font-bold text-foreground">RejectModders</h3>
               <p className="flex items-center justify-center gap-1 text-sm text-muted-foreground">
-                <MapPin className="h-3.5 w-3.5 text-primary" /> Missouri, USA
+                <MapPin className="h-3.5 w-3.5 text-primary" /> {SITE_LOCATION}
               </p>
             </div>
           </div>
@@ -107,8 +108,8 @@ export function ContactSection() {
             <div className="mb-6 grid grid-cols-3 gap-3">
               {statItems.map((s, i) => (
                 <motion.div key={s.label}
-                  initial={{ opacity: 0, y: 10 }} animate={isInView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: DUR, delay: 0.15 + i * 0.07, ease: EASE }}
+                  initial={{ opacity: 0, y: 8 }} animate={isInView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: DUR, delay: 0.08 + i * 0.03, ease: EASE }}
                   className="card-hover rounded-lg border border-border bg-secondary p-3 text-center cursor-default"
                 >
                   <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground">
@@ -139,8 +140,8 @@ export function ContactSection() {
               )
               return (
                 <motion.div key={link.label}
-                  initial={{ opacity: 0, y: 8 }} animate={isInView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: DUR, delay: 0.22 + i * 0.07, ease: EASE }}
+                  initial={{ opacity: 0, y: 6 }} animate={isInView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ duration: DUR, delay: 0.1 + i * 0.03, ease: EASE }}
                 >
                   {link.isEmail ? (
                     <button

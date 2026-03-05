@@ -9,22 +9,31 @@ import { CommandPalette } from '@/components/command-palette'
 import { FloatingCTA } from '@/components/floating-cta'
 import { BugFixToast } from '@/components/bug-fix-toast'
 import { ThemeProvider } from '@/components/theme-provider'
-import '@/lib/init-cron' // Import to initialize cron jobs on server startup
+import { LegacyDomainBanner } from '@/components/legacy-domain-banner'
+import {
+  SITE_URL,
+  SITE_NAME,
+  SITE_TITLE,
+  SITE_DESCRIPTION,
+  SITE_KEYWORDS,
+  SITE_AUTHOR,
+  THEME_COLOR,
+} from '@/config/constants'
+import '@/lib/init-cron'
 import './globals.css'
-
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' })
 const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-jetbrains-mono' })
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://rejectmodders.dev'),
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: 'RejectModders | Cybersecurity Developer',
-    template: '%s | RejectModders',
+    default: SITE_TITLE,
+    template: `%s | ${SITE_NAME}`,
   },
-  description: 'Cybersecurity-focused developer from Missouri. Building security tools, writing code in Python, C, C++ and C#. Founder of Disutils & VulnRadar.',
-  keywords: ['cybersecurity', 'developer', 'python', 'security tools', 'RejectModders', 'VulnRadar', 'Disutils'],
-  authors: [{ name: 'RejectModders' }],
+  description: SITE_DESCRIPTION,
+  keywords: SITE_KEYWORDS,
+  authors: [{ name: SITE_AUTHOR }],
   icons: {
     icon: [
       { url: '/avatar.png', sizes: '32x32' },
@@ -35,33 +44,33 @@ export const metadata: Metadata = {
     apple: '/avatar.png',
   },
   openGraph: {
-    title: 'RejectModders | Cybersecurity Developer',
+    title: SITE_TITLE,
     description: 'Cybersecurity-focused developer from Missouri. Building security tools and writing code.',
     type: 'website',
-    url: 'https://rejectmodders.dev',
-    siteName: 'RejectModders',
+    url: SITE_URL,
+    siteName: SITE_NAME,
     images: [
       {
         url: '/avatar.png',
         width: 192,
         height: 192,
-        alt: 'RejectModders Avatar',
+        alt: `${SITE_NAME} Avatar`,
       },
     ],
   },
   twitter: {
     card: 'summary',
-    title: 'RejectModders | Cybersecurity Developer',
+    title: SITE_TITLE,
     description: 'Cybersecurity-focused developer from Missouri. Building security tools and writing code.',
     images: ['/avatar.png'],
   },
   other: {
-    'theme-color': '#dc2626',
+    'theme-color': THEME_COLOR,
   },
 }
 
 export const viewport: Viewport = {
-  themeColor: '#dc2626',
+  themeColor: THEME_COLOR,
   width: 'device-width',
   initialScale: 1,
 }
@@ -78,6 +87,7 @@ export default function RootLayout({
       </head>
       <body className="relative font-sans antialiased noise-bg cursor-none" suppressHydrationWarning>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+          <LegacyDomainBanner />
           <CustomCursor />
           <TerminalEasterEgg />
           <CommandPalette />

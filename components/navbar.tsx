@@ -1,4 +1,4 @@
-﻿"use client"
+"use client"
 
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
@@ -6,16 +6,7 @@ import { Menu, X, Sun, Moon, Search } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useTheme } from "next-themes"
-
-const navLinks = [
-  { label: "Home",     href: "/" },
-  { label: "About",    href: "/about" },
-  { label: "Projects", href: "/projects" },
-  { label: "Friends",  href: "/friends" },
-  { label: "Games",    href: "/games" },
-  { label: "Spotify",  href: "/spotify" },
-  { label: "Contact",  href: "/#contact" },
-]
+import { NAV_LINKS, GITHUB_URL } from "@/config/constants"
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false)
@@ -56,7 +47,7 @@ export function Navbar() {
 
           {/* Desktop links - all appear together, no stagger */}
           <div className="hidden items-center gap-8 md:flex">
-            {navLinks.map((link) => {
+            {NAV_LINKS.map((link) => {
               const isActive = link.href === "/" ? pathname === "/" : pathname.startsWith(link.href.replace("/#", "/"))
               return (
                 <Link
@@ -71,7 +62,7 @@ export function Navbar() {
               )
             })}
             <a
-              href="https://github.com/RejectModders"
+              href={GITHUB_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="rounded-md border border-primary/30 bg-primary/10 px-4 py-1.5 font-mono text-sm text-primary transition-all hover:bg-primary/20 hover:shadow-[0_0_15px_oklch(0.58_0.2_15/0.2)]"
@@ -130,7 +121,7 @@ export function Navbar() {
               className="fixed inset-x-0 top-15 z-40 border-b border-border bg-background/95 backdrop-blur-xl md:hidden"
             >
               <div className="flex flex-col gap-1 px-4 py-4">
-                {navLinks.map((link) => (
+                {NAV_LINKS.map((link) => (
                   <Link
                     key={link.label}
                     href={link.href}
@@ -142,7 +133,7 @@ export function Navbar() {
                 ))}
                 <div className="mt-2 flex gap-2">
                   <a
-                    href="https://github.com/RejectModders"
+                    href={GITHUB_URL}
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => setMobileOpen(false)}

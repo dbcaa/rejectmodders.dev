@@ -1,21 +1,21 @@
 import { NextResponse } from "next/server"
+import { GITHUB_USERNAME, GITHUB_API_URL, CACHE_DURATION_API, CACHE_DURATION_API_STALE } from "@/config/constants"
 
-// Cache activity for 5 minutes (300 seconds) for fresh activity updates
-export const revalidate = 300
+// Cache activity for 10 minutes (600 seconds) for fresh activity updates
+export const revalidate = CACHE_DURATION_API
 
-const USER = "RejectModders"
 const INTERESTING = ["PushEvent", "CreateEvent", "PullRequestEvent", "IssuesEvent", "WatchEvent"]
 
 export async function GET() {
   try {
     const res = await fetch(
-      `https://api.github.com/users/${USER}/events/public?per_page=30`,
+      `${GITHUB_API_URL}/users/${GITHUB_USERNAME}/events/public?per_page=30`,
       {
         headers: {
           Accept: "application/vnd.github+json",
           "X-GitHub-Api-Version": "2022-11-28",
         },
-        next: { revalidate: 300, tags: ["github-activity"] },
+        next: { revalidate: CACHE_DURATION_API, tags: ["github-activity"] },
       }
     )
     if (!res.ok) return NextResponse.json([], { status: res.status })
@@ -25,7 +25,7 @@ export async function GET() {
       : []
 
     return NextResponse.json(filtered, {
-      headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600" },
+      headers: { "Cache-Control": `public, s-maxage=${CACHE_DURATION_API}, stale-while-revalidate=${CACHE_DURATION_API_STALE}` },
     })
   } catch {
     return NextResponse.json([], { status: 500 })

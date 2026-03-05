@@ -1,8 +1,9 @@
-﻿"use client"
+"use client"
 
 import { motion, useInView } from "framer-motion"
 import { useRef } from "react"
 import { Heart, MessageCircle, Github as GitHubIcon, Twitter, Globe, Youtube, User, Mail } from "lucide-react"
+import { GITHUB_REPO_URL, ANIMATION_EASE, ANIMATION_DURATION } from "@/config/constants"
 
 interface Friend {
   name: string
@@ -17,8 +18,8 @@ interface Friend {
   resolvedAvatar?: string | null
 }
 
-const EASE = [0.215, 0.61, 0.355, 1] as const
-const DUR  = 0.4
+const EASE = ANIMATION_EASE
+const DUR  = ANIMATION_DURATION
 
 const cardVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -95,7 +96,7 @@ export function FriendsPageContent({ friends }: { friends: Friend[] }) {
                 </p>
               </div>
               <a
-                href="https://github.com/RejectModders/rejectmodders.dev"
+                href={GITHUB_REPO_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex shrink-0 items-center gap-2 rounded-lg border border-primary/40 bg-primary/10 px-5 py-2.5 font-mono text-sm text-primary transition-all duration-150 hover:-translate-y-0.5 hover:bg-primary/20 hover:border-primary/60"

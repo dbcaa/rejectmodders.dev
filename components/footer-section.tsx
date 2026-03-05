@@ -1,17 +1,10 @@
-﻿"use client"
+"use client"
 
 import { motion, useInView } from "framer-motion"
 import { useRef, useEffect, useState } from "react"
 import { GitBranch } from "lucide-react"
 import Link from "next/link"
-
-const navLinks = [
-	{ href: "/", label: "Home", external: false },
-	{ href: "/about", label: "About", external: false },
-	{ href: "/projects", label: "Projects", external: false },
-	{ href: "/friends", label: "Friends", external: false },
-	{ href: "https://vulnradar.dev", label: "VulnRadar", external: true },
-]
+import { FOOTER_NAV_LINKS, GITHUB_URL, SITE_NAME } from "@/config/constants"
 
 function StatusBadge() {
 	const [status, setStatus] = useState<"loading" | "ok" | "error">("loading")
@@ -82,7 +75,7 @@ export function FooterSection() {
 
 				{/* Nav - plain links, hover handled by CSS transition */}
 				<div className="flex flex-wrap items-center justify-center gap-6">
-					{navLinks.map((link) =>
+					{FOOTER_NAV_LINKS.map((link) =>
 						link.external ? (
 							<a
 								key={link.label}
@@ -104,7 +97,7 @@ export function FooterSection() {
 						)
 					)}
 					<a
-						href="https://github.com/RejectModders"
+						href={GITHUB_URL}
 						target="_blank"
 						rel="noopener noreferrer"
 						className="flex items-center gap-1 font-mono text-xs text-muted-foreground transition-colors hover:text-primary"
@@ -117,7 +110,7 @@ export function FooterSection() {
 				{/* Copyright + status */}
 				<div className="flex flex-col items-center gap-1.5 md:items-end">
 				<div className="font-mono text-xs text-muted-foreground/60">
-					{`\u00A9 ${new Date().getFullYear()} RejectModders`}
+					{`\u00A9 ${new Date().getFullYear()} ${SITE_NAME}`}
 				</div>
 				<StatusBadge />
 				</div>

@@ -1,3 +1,6 @@
+// Site configuration - import from centralized config
+const SITE_URL = "https://rejectmodders.dev"
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   typescript: {
@@ -11,25 +14,26 @@ const nextConfig = {
       {
         source: "/(.*)",
         headers: [
+          // ── Caching for pages (2-4 hours) ────────────────────────
+          {
+            key: "Cache-Control",
+            value: "public, max-age=7200, s-maxage=7200, stale-while-revalidate=14400",
+          },
           // ── XSS / injection ─────────────────────────────────────
           {
             key: "Content-Security-Policy",
             value: [
               "default-src 'self'",
-              // Next.js needs 'unsafe-inline' for its runtime styles; nonces would require custom server
               "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
               "font-src 'self' https://fonts.gstatic.com",
-              // all avatars now proxied through /api/avatar (same-origin), so external avatar hosts removed from img-src
               "img-src 'self' data: blob:",
               "connect-src 'self' https://api.github.com https://api.spotify.com https://accounts.spotify.com https://va.vercel-scripts.com",
               "media-src 'self'",
-              // block Flash, Java applets and other legacy plugins
               "object-src 'none'",
               "frame-ancestors 'none'",
               "base-uri 'self'",
               "form-action 'self'",
-              // auto-upgrade any accidental HTTP sub-resource requests
               "upgrade-insecure-requests",
             ].join("; "),
           },
@@ -54,7 +58,6 @@ const nextConfig = {
             value: "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()",
           },
           // ── HSTS — preload-ready ──────────────────────────────────
-          // After verifying all subdomains support HTTPS, submit at hstspreload.org
           {
             key: "Strict-Transport-Security",
             value: "max-age=31536000; includeSubDomains; preload",
@@ -68,7 +71,6 @@ const nextConfig = {
             key: "Cross-Origin-Resource-Policy",
             value: "same-origin",
           },
-          // credentialless allows cross-origin resources without CORP headers
           {
             key: "Cross-Origin-Embedder-Policy",
             value: "credentialless",
@@ -79,7 +81,7 @@ const nextConfig = {
             value: JSON.stringify({
               group: "default",
               max_age: 86400,
-              endpoints: [{ url: "https://rejectmodders.dev/api/csp-report" }],
+              endpoints: [{ url: `${SITE_URL}/api/csp-report` }],
             }),
           },
           {
@@ -92,13 +94,27 @@ const nextConfig = {
           },
         ],
       },
-      // API routes — tighten CORS to own origin only
+      // Static assets - long-term caching (1 year)
+      {
+        source: "/_next/static/(.*)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      // API routes — shorter cache, tighten CORS to own origin only
       {
         source: "/api/(.*)",
         headers: [
           {
+            key: "Cache-Control",
+            value: "public, s-maxage=600, stale-while-revalidate=1200",
+          },
+          {
             key: "Access-Control-Allow-Origin",
-            value: "https://rejectmodders.dev",
+            value: SITE_URL,
           },
           {
             key: "Access-Control-Allow-Methods",

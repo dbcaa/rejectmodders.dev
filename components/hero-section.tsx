@@ -5,15 +5,17 @@ import { useRef } from "react"
 import { ChevronDown, ArrowRight } from "lucide-react"
 import Link from "next/link"
 import dynamic from "next/dynamic"
+import { GITHUB_URL, TECH_TAGS } from "@/config/constants"
 
 const Particles = dynamic(() => import("@/components/particles"), { ssr: false })
-// Letter animation - starts at 0.4s, each letter adds 0.025s
+
+// Fast, snappy letter animation - starts immediately, each letter adds 0.02s
 const letterVariants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 12 },
   visible: (i: number) => ({
     opacity: 1,
     y: 0,
-    transition: { delay: 0.4 + i * 0.025, duration: 0.35, ease: [0.215, 0.61, 0.355, 1] },
+    transition: { delay: i * 0.02, duration: 0.2, ease: [0.25, 0.1, 0.25, 1] },
   }),
 }
 
@@ -55,11 +57,11 @@ export function HeroSection() {
 
       <motion.div style={{ y, opacity, willChange: "transform, opacity" }} className="relative z-10 flex flex-col items-center gap-5 px-4 text-center">
 
-        {/* Status badge - appears right after navbar (0.38s) */}
+{/* Status badge - appears immediately */}
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.38, duration: 0.3, ease: "easeOut" }}
+          transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
           className="flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-4 py-1.5 backdrop-blur-sm"
         >
           <span className="relative flex h-2 w-2">
@@ -86,11 +88,11 @@ export function HeroSection() {
           ))}
         </h1>
 
-        {/* Subtitle - 0.75s (right after name finishes) */}
+{/* Subtitle - fast fade in */}
         <motion.p
-          initial={{ opacity: 0, y: 12 }}
+          initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.75, duration: 0.4, ease: "easeOut" }}
+          transition={{ delay: 0.3, duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
           className="max-w-xl text-pretty text-lg text-muted-foreground md:text-xl"
         >
           Cybersecurity dev from Missouri, building things I actually care about.
@@ -98,19 +100,19 @@ export function HeroSection() {
           <span className="text-foreground">Right now that means security tools and keeping people safe online.</span>
         </motion.p>
 
-        {/* Tech tags - start at 0.82s, stagger 0.04s, last tag at ~1.02s */}
+        {/* Tech tags - fast stagger */}
         <motion.div
           initial="hidden"
           animate="visible"
-          variants={{ visible: { transition: { staggerChildren: 0.04, delayChildren: 0.82 } } }}
+          variants={{ visible: { transition: { staggerChildren: 0.03, delayChildren: 0.35 } } }}
           className="flex flex-wrap justify-center gap-2"
         >
-          {["Python", "C / C++", "JavaScript", "TypeScript", "Bash"].map((lang) => (
+          {TECH_TAGS.map((lang) => (
             <motion.span
               key={lang}
               variants={{
-                hidden: { opacity: 0, y: 6 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.25, ease: "easeOut" } },
+                hidden: { opacity: 0, scale: 0.9 },
+                visible: { opacity: 1, scale: 1, transition: { duration: 0.2, ease: [0.25, 0.1, 0.25, 1] } },
               }}
               className="rounded-md border border-border bg-secondary/80 px-3 py-1 font-mono text-xs text-muted-foreground backdrop-blur-sm transition-all duration-150 hover:scale-105 hover:border-primary/40"
             >
@@ -119,15 +121,15 @@ export function HeroSection() {
           ))}
         </motion.div>
 
-        {/* CTA buttons - start at 0.62s, stagger 0.07s (appear while name is still animating, feels parallel) */}
+        {/* CTA buttons - fast stagger */}
         <motion.div
           initial="hidden"
           animate="visible"
-          variants={{ visible: { transition: { staggerChildren: 0.07, delayChildren: 0.62 } } }}
+          variants={{ visible: { transition: { staggerChildren: 0.05, delayChildren: 0.4 } } }}
           className="flex flex-col items-center gap-3 pt-1 sm:flex-row sm:gap-4"
         >
           <motion.div
-            variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: "easeOut" } } }}
+            variants={{ hidden: { opacity: 0, y: 8 }, visible: { opacity: 1, y: 0, transition: { duration: 0.25, ease: [0.25, 0.1, 0.25, 1] } } }}
             whileTap={{ scale: 0.97 }}
           >
             <Link href="/projects" className="group inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-3 font-medium text-primary-foreground hover:brightness-110 glow-red transition-transform duration-150 hover:-translate-y-0.5">
@@ -136,7 +138,7 @@ export function HeroSection() {
             </Link>
           </motion.div>
           <motion.div
-            variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: "easeOut" } } }}
+            variants={{ hidden: { opacity: 0, y: 8 }, visible: { opacity: 1, y: 0, transition: { duration: 0.25, ease: [0.25, 0.1, 0.25, 1] } } }}
             whileTap={{ scale: 0.97 }}
           >
             <Link href="/about" className="rounded-lg border border-border bg-secondary px-6 py-3 font-medium text-secondary-foreground hover:border-primary/30 hover:bg-muted transition-all duration-150 hover:-translate-y-0.5">
@@ -144,9 +146,9 @@ export function HeroSection() {
             </Link>
           </motion.div>
           <motion.a
-            variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: "easeOut" } } }}
+            variants={{ hidden: { opacity: 0, y: 8 }, visible: { opacity: 1, y: 0, transition: { duration: 0.25, ease: [0.25, 0.1, 0.25, 1] } } }}
             whileTap={{ scale: 0.97 }}
-            href="https://github.com/RejectModders"
+            href={GITHUB_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="rounded-lg border border-border bg-secondary px-6 py-3 font-medium text-secondary-foreground hover:border-primary/30 hover:bg-muted transition-all duration-150 hover:-translate-y-0.5"
@@ -161,18 +163,18 @@ export function HeroSection() {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.1, duration: 0.6 }}
+        transition={{ delay: 0.6, duration: 0.4 }}
         className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3"
       >
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 4, duration: 2 }}
+          transition={{ delay: 1.5, duration: 0.8 }}
           className="font-mono text-[10px] text-muted-foreground/25 select-none"
         >
-          {`// psst - try the konami code`}
+          {`// press Ctrl+K for magic`}
         </motion.p>
-        <motion.div animate={{ y: [0, 8, 0] }} transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}>
+        <motion.div animate={{ y: [0, 6, 0] }} transition={{ repeat: Infinity, duration: 1.8, ease: "easeInOut" }}>
           <ChevronDown className="h-6 w-6 text-muted-foreground" />
         </motion.div>
       </motion.div>

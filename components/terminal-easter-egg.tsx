@@ -1,10 +1,8 @@
-﻿"use client"
+"use client"
 
 import { useEffect, useRef, useState, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { X, Terminal, Maximize2, Minimize2, Minus } from "lucide-react"
-
-const KONAMI = ["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"]
 
 interface Line { text: string; color: string }
 
@@ -2466,12 +2464,11 @@ const ASYNC_CMDS: Record<string, () => Promise<Line[]>> = {
 }
 
 export function TerminalEasterEgg() {
-  const [open, setOpen]             = useState(false)
+const [open, setOpen]             = useState(false)
   const [lines, setLines]           = useState<Line[]>([...BOOT_LINES])
   const [input, setInput]           = useState("")
   const [cmdHistory, setCmdHistory] = useState<string[]>([])
   const [histIdx, setHistIdx]       = useState(-1)
-  const [progress, setProgress]     = useState(0)
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [isMinimized, setIsMinimized]   = useState(false)
   const [pos, setPos]               = useState({ x: 0, y: 0 })
@@ -2487,11 +2484,10 @@ export function TerminalEasterEgg() {
     color?: string
   } | null>(null)
 
-  const dragStart    = useRef({ mx: 0, my: 0, px: 0, py: 0 })
+const dragStart    = useRef({ mx: 0, my: 0, px: 0, py: 0 })
   const terminalRef  = useRef<HTMLDivElement>(null)
   const inputRef     = useRef<HTMLInputElement>(null)
   const bottomRef    = useRef<HTMLDivElement>(null)
-  const konamiRef    = useRef(0)
 
   // Center on open
   useEffect(() => {
@@ -2570,24 +2566,9 @@ export function TerminalEasterEgg() {
     }
   }, [])
 
-  // Konami listener
+// Escape to close terminal
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      const tag = (e.target as HTMLElement).tagName
-      if (!open && (tag === "INPUT" || tag === "TEXTAREA")) return
-
-      if (e.key === KONAMI[konamiRef.current]) {
-        konamiRef.current++
-        setProgress(konamiRef.current)
-        if (konamiRef.current === KONAMI.length) {
-          konamiRef.current = 0
-          setProgress(0)
-          setOpen(true)
-        }
-      } else {
-        konamiRef.current = 0
-        setProgress(0)
-      }
       if (open && e.key === "Escape") setOpen(false)
     }
     window.addEventListener("keydown", handler)
@@ -3087,17 +3068,8 @@ export function TerminalEasterEgg() {
     }
   }, [input, cmdHistory, runCommand, awaitingPassword, awaitingConfirm, confirmContext, sudoPending, appendLines])
 
-  return (
+return (
     <>
-      {/* Konami progress indicator */}
-      {progress > 0 && (
-        <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 flex gap-1 pointer-events-none">
-          {KONAMI.map((_, i) => (
-            <div key={i} className={`w-2 h-2 rounded-full transition-colors ${i < progress ? "bg-primary" : "bg-muted"}`} />
-          ))}
-        </div>
-      )}
-
       {/* Minimized taskbar pill */}
       {open && isMinimized && (
         <div

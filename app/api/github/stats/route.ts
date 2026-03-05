@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server"
+import { GITHUB_USERNAME, GITHUB_API_URL, CACHE_DURATION_PAGE, CACHE_DURATION_PAGE_MAX } from "@/config/constants"
 
-export const revalidate = 7200
+export const revalidate = CACHE_DURATION_PAGE
 
-const USER = "RejectModders"
 const ORGS = ["disutils", "vulnradar"]
 
 export async function GET() {
@@ -11,13 +11,13 @@ export async function GET() {
       Accept: "application/vnd.github+json",
       "X-GitHub-Api-Version": "2022-11-28",
     }
-    const opts = { headers, next: { revalidate: 7200, tags: ["github-stats"] } }
+    const opts = { headers, next: { revalidate: CACHE_DURATION_PAGE, tags: ["github-stats"] } }
 
     const [user, userRepos, ...orgRepos] = await Promise.all([
-      fetch(`https://api.github.com/users/${USER}`, opts).then(r => r.json()),
-      fetch(`https://api.github.com/users/${USER}/repos?per_page=100&type=public`, opts).then(r => r.json()),
+      fetch(`${GITHUB_API_URL}/users/${GITHUB_USERNAME}`, opts).then(r => r.json()),
+      fetch(`${GITHUB_API_URL}/users/${GITHUB_USERNAME}/repos?per_page=100&type=public`, opts).then(r => r.json()),
       ...ORGS.map(org =>
-        fetch(`https://api.github.com/orgs/${org}/repos?per_page=100`, opts).then(r => r.json())
+        fetch(`${GITHUB_API_URL}/orgs/${org}/repos?per_page=100`, opts).then(r => r.json())
       ),
     ])
 
@@ -33,7 +33,7 @@ export async function GET() {
 
     return NextResponse.json(
       { public_repos: user.public_repos ?? 0, followers: user.followers ?? 0, stars },
-      { headers: { "Cache-Control": "public, s-maxage=7200, stale-while-revalidate=14400" } }
+      { headers: { "Cache-Control": `public, s-maxage=${CACHE_DURATION_PAGE}, stale-while-revalidate=${CACHE_DURATION_PAGE_MAX}` } }
     )
   } catch {
     return NextResponse.json({ public_repos: 0, followers: 0, stars: 0 }, { status: 500 })

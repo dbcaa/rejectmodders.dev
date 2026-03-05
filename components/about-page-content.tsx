@@ -8,18 +8,18 @@ import {
 } from "lucide-react"
 import { SKILLS } from "@/data/skills"
 
-// ── Shared animation constants ──────────────────────────────────────────────
-const EASE = [0.215, 0.61, 0.355, 1] as const
-const DUR  = 0.4
+// ── Shared animation constants - fast and snappy ────────────────────────────
+const EASE = [0.25, 0.1, 0.25, 1] as const
+const DUR  = 0.25
 const fadeUp = (delay = 0) => ({
-  initial:    { opacity: 0, y: 20 },
+  initial:    { opacity: 0, y: 12 },
   animate:    { opacity: 1, y: 0  },
   transition: { duration: DUR, delay, ease: EASE },
 })
 const underline = (delay = 0) => ({
   initial:    { scaleX: 0 },
   animate:    { scaleX: 1 },
-  transition: { duration: DUR, delay, ease: "easeOut" },
+  transition: { duration: 0.3, delay, ease: "easeOut" },
   style:      { originX: 0 } as React.CSSProperties,
 })
 
@@ -147,7 +147,7 @@ export function AboutPageContent() {
         {/* ── Hero ─────────────────────────────────────────────────────── */}
         <div ref={heroRef} className="mb-20">
           {/* Page title */}
-          <motion.div {...fadeUp(0.45)} animate={heroInView ? { opacity: 1, y: 0 } : {}} className="mb-8">
+          <motion.div {...fadeUp(0)} animate={heroInView ? { opacity: 1, y: 0 } : {}} className="mb-8">
             <span className="font-mono text-sm text-primary">{'// about'}</span>
             <h1 className="mt-2 text-4xl font-bold text-foreground md:text-5xl lg:text-6xl">
               About <span className="text-gradient">Me</span>
@@ -156,12 +156,12 @@ export function AboutPageContent() {
 
           <div className="grid gap-8 lg:grid-cols-3">
             {/* Avatar + stats */}
-            <motion.div {...fadeUp(0.52)} animate={heroInView ? { opacity: 1, y: 0 } : {}} className="flex flex-col items-center lg:items-start">
+            <motion.div {...fadeUp(0.05)} animate={heroInView ? { opacity: 1, y: 0 } : {}} className="flex flex-col items-center lg:items-start">
               {stats?.avatar_url && (
                 <div className="relative mb-6">
                   <motion.div animate={{ scale: [1, 1.06, 1], opacity: [0.4, 0.1, 0.4] }} transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }} className="absolute inset-0 rounded-2xl border-2 border-primary/40" />
                   <img src={`/api/avatar?url=${encodeURIComponent(stats.avatar_url)}`} alt="RejectModders" className="relative h-40 w-40 rounded-2xl border-2 border-primary/20 object-cover transition-transform duration-150 hover:scale-105" />
-                  <motion.div {...fadeUp(0.6)} animate={heroInView ? { opacity: 1, y: 0 } : {}} className="absolute -bottom-2 -right-2 rounded-full border border-primary/30 bg-background px-3 py-1 font-mono text-xs text-primary animate-pulse-glow">
+                  <motion.div {...fadeUp(0.1)} animate={heroInView ? { opacity: 1, y: 0 } : {}} className="absolute -bottom-2 -right-2 rounded-full border border-primary/30 bg-background px-3 py-1 font-mono text-xs text-primary animate-pulse-glow">
                     Hireable
                   </motion.div>
                 </div>
@@ -175,7 +175,7 @@ export function AboutPageContent() {
                 ].map((s, i) => (
                   <motion.div
                     key={s.label}
-                    {...fadeUp(0.58 + i * 0.07)}
+                    {...fadeUp(0.08 + i * 0.03)}
                     animate={heroInView ? { opacity: 1, y: 0 } : {}}
                     className="card-hover rounded-lg border border-border bg-card p-3 text-center cursor-default"
                   >
@@ -190,7 +190,7 @@ export function AboutPageContent() {
             </motion.div>
 
             {/* Bio */}
-            <motion.div {...fadeUp(0.58)} animate={heroInView ? { opacity: 1, y: 0 } : {}} className="lg:col-span-2">
+            <motion.div {...fadeUp(0.1)} animate={heroInView ? { opacity: 1, y: 0 } : {}} className="lg:col-span-2">
               <div className="card-hover rounded-xl border border-border bg-card p-6 md:p-8">
                 <div className="mb-6 flex items-center gap-2">
                   {[["bg-[#ff5f57]","border-[#e0443e]"], ["bg-[#febc2e]","border-[#d4a012]"], ["bg-[#28c840]","border-[#1aab29]"]].map(([bg, border], i) => <div key={i} className={`h-3 w-3 rounded-full border ${bg} ${border}`} />)}
@@ -231,9 +231,9 @@ export function AboutPageContent() {
               {SKILLS.map((skill, i) => (
                 <motion.div
                   key={skill.name}
-                  initial={{ opacity: 0, y: 16 }}
+                  initial={{ opacity: 0, y: 10 }}
                   animate={skillsInView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: DUR, delay: i * 0.06, ease: EASE }}
+                  transition={{ duration: DUR, delay: i * 0.03, ease: EASE }}
                 >
                   <div className="mb-1.5 flex items-center justify-between">
                     <span className="text-sm font-medium text-foreground">{skill.name}</span>
@@ -241,7 +241,7 @@ export function AboutPageContent() {
                       className="font-mono text-xs text-primary"
                       initial={{ opacity: 0 }}
                       animate={skillsInView ? { opacity: 1 } : {}}
-                      transition={{ duration: 0.3, delay: 0.1 + i * 0.06 }}
+                      transition={{ duration: 0.2, delay: i * 0.03 }}
                     >
                       {skill.level > 100 ? skill.level : <AnimatedNumber value={skillsInView ? skill.level : 0} isInView={skillsInView} />}%
                     </motion.span>
@@ -250,7 +250,7 @@ export function AboutPageContent() {
                     <motion.div
                       initial={{ width: 0 }}
                       animate={skillsInView ? { width: `${Math.min(skill.level, 100)}%` } : {}}
-                      transition={{ duration: 1.1, delay: 0.1 + i * 0.06, ease: "easeOut" }}
+                      transition={{ duration: 0.6, delay: i * 0.03, ease: "easeOut" }}
                       className="h-full rounded-full bg-primary"
                       style={{ boxShadow: "0 0 8px color-mix(in oklch, var(--primary) 50%, transparent)" }}
                     />
@@ -269,9 +269,9 @@ export function AboutPageContent() {
               <motion.a
                 key={org.name}
                 href={org.url} target="_blank" rel="noopener noreferrer"
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 12 }}
                 animate={orgsInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: DUR, delay: i * 0.1, ease: EASE }}
+                transition={{ duration: DUR, delay: i * 0.05, ease: EASE }}
                 whileTap={{ scale: 0.98 }}
                 className="card-hover group rounded-xl border border-border bg-card p-6 md:p-8"
               >
@@ -301,7 +301,7 @@ export function AboutPageContent() {
             {/* Vertical line */}
             <motion.div
               initial={{ scaleY: 0 }} animate={timelineInView ? { scaleY: 1 } : {}}
-              transition={{ duration: 1.2, delay: 0.1, ease: "easeOut" }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
               style={{ transformOrigin: "top" }}
               className="absolute left-5 top-0 bottom-0 w-px bg-border md:left-1/2 md:-translate-x-px"
             />
@@ -311,15 +311,15 @@ export function AboutPageContent() {
               return (
                 <motion.div
                   key={item.year}
-                  initial={{ opacity: 0, y: 18 }}
+                  initial={{ opacity: 0, y: 12 }}
                   animate={timelineInView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: DUR, delay: 0.15 + i * 0.09, ease: EASE }}
+                  transition={{ duration: DUR, delay: i * 0.04, ease: EASE }}
                   className={`relative mb-10 flex flex-col gap-2 pl-14 md:w-1/2 md:pl-0 ${isRight ? "md:ml-auto md:pl-12" : "md:pr-12 md:text-right"}`}
                 >
                   {/* Icon dot */}
                   <motion.div
                     initial={{ scale: 0 }} animate={timelineInView ? { scale: 1 } : {}}
-                    transition={{ delay: 0.2 + i * 0.09, type: "spring", stiffness: 400, damping: 18 }}
+                    transition={{ delay: i * 0.04, type: "spring", stiffness: 500, damping: 20 }}
                     className={`absolute left-1.5 top-0.5 flex h-8 w-8 items-center justify-center rounded-full border-2 border-primary bg-background transition-colors duration-150 hover:bg-primary/10 ${isRight ? "md:-left-4" : "md:left-auto md:-right-4"}`}
                   >
                     <Icon className="h-3.5 w-3.5 text-primary" />

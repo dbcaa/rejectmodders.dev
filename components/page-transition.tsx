@@ -4,8 +4,6 @@ import { motion, AnimatePresence } from "framer-motion"
 import { usePathname } from "next/navigation"
 import { useEffect, useRef, useState } from "react"
 
-const EASE = [0.215, 0.61, 0.355, 1] as const
-
 /** Thin progress bar that animates to ~85% while loading, then to 100% on complete */
 function ProgressBar({ loading }: { loading: boolean }) {
   const [width, setWidth] = useState(0)
@@ -16,18 +14,18 @@ function ProgressBar({ loading }: { loading: boolean }) {
     if (loading) {
       setVisible(true)
       setWidth(0)
-      // Quickly jump to 15% then slowly inch toward 85%
-      requestAnimationFrame(() => setWidth(15))
+      // Quickly jump to 20% then smoothly inch toward 85%
+      requestAnimationFrame(() => setWidth(20))
       timerRef.current = setInterval(() => {
         setWidth(w => {
           if (w >= 85) { clearInterval(timerRef.current!); return 85 }
-          return w + (85 - w) * 0.06
+          return w + (85 - w) * 0.08
         })
-      }, 100)
+      }, 80)
     } else {
       if (timerRef.current) clearInterval(timerRef.current)
       setWidth(100)
-      const t = setTimeout(() => { setVisible(false); setWidth(0) }, 400)
+      const t = setTimeout(() => { setVisible(false); setWidth(0) }, 250)
       return () => clearTimeout(t)
     }
     return () => { if (timerRef.current) clearInterval(timerRef.current) }
@@ -36,15 +34,14 @@ function ProgressBar({ loading }: { loading: boolean }) {
   if (!visible) return null
 
   return (
-    <div className="fixed inset-x-0 top-0 z-9999 h-0.5">
+    <div className="fixed inset-x-0 top-0 z-[9999] h-0.5">
       <div
-        className="h-full transition-all"
+        className="h-full"
         style={{
           width: `${width}%`,
           background: "var(--primary)",
           boxShadow: "0 0 8px var(--primary), 0 0 3px var(--primary)",
-          transitionDuration: width === 100 ? "300ms" : "200ms",
-          transitionTimingFunction: "ease-out",
+          transition: width === 100 ? "width 200ms ease-out" : "width 150ms linear",
         }}
       />
     </div>
@@ -99,10 +96,10 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
       <AnimatePresence mode="wait">
         <motion.div
           key={displayKey}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.18, ease: "easeOut" }}
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -4 }}
+          transition={{ duration: 0.15, ease: [0.25, 0.1, 0.25, 1] }}
         >
           {displayChildren}
         </motion.div>
