@@ -6,6 +6,7 @@ import { motion } from "framer-motion"
 import { useRouter } from "next/navigation"
 import { Trophy, Play, Gamepad2 } from "lucide-react"
 import { loadHS } from "./games/helpers"
+import { EASE, DUR, PAGE_START, PAGE_STEP, SCROLL_STEP } from "@/lib/animation"
 
 // Previews – loaded dynamically so they never block the main thread
 const SnakePreview         = dynamic(() => import("./games/snake/preview").then(m => ({ default: m.SnakePreview })),         { ssr: false })
@@ -144,7 +145,7 @@ export function GamesPageContent() {
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.35, ease: [0.215, 0.61, 0.355, 1] }}
+          transition={{ duration: DUR, delay: PAGE_START, ease: EASE }}
           className="mb-10 text-center"
         >
           <div className="inline-flex items-center gap-2 mb-3 px-3 py-1 rounded-full border border-primary/20 bg-primary/5">
@@ -163,7 +164,7 @@ export function GamesPageContent() {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.08 }}
+          transition={{ duration: DUR, delay: PAGE_START + PAGE_STEP, ease: EASE }}
           className="mb-10 flex flex-wrap gap-2 justify-center"
         >
           {CATEGORIES.map(cat => {
@@ -205,7 +206,7 @@ export function GamesPageContent() {
                     key={id}
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.22, delay: Math.min(i * 0.025, 0.25), ease: "easeOut" }}
+                    transition={{ duration: DUR, delay: Math.min(i * SCROLL_STEP, 0.3), ease: EASE }}
                     onMouseEnter={() => setHovered(id)}
                     onMouseLeave={() => setHovered(null)}
                     onClick={() => router.push(`/games/${id}`)}

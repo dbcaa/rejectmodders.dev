@@ -5,17 +5,17 @@
 
 // ── Timing Constants ─────────────────────────────────────────────────────────
 /** Standard easing curve (snappy ease-out) */
-export const EASE = [0.215, 0.61, 0.355, 1] as const
+export const EASE = [0.25, 0.1, 0.25, 1] as const
 
-/** Base duration used everywhere */
-export const DUR = 0.4
+/** Base duration - fast and snappy */
+export const DUR = 0.3
 
-/** Page-load sequence: navbar finishes ~0.35s, content starts at 0.45s */
-export const PAGE_START = 0.45
-export const PAGE_STEP = 0.08
+/** Page-load sequence: navbar finishes ~0.35s, content starts at 0.4s */
+export const PAGE_START = 0.4
+export const PAGE_STEP = 0.06
 
-/** Scroll-triggered stagger */
-export const SCROLL_STEP = 0.07
+/** Scroll-triggered stagger - faster for scroll-in */
+export const SCROLL_STEP = 0.05
 
 // ── Reusable Variants ────────────────────────────────────────────────────────
 /** Fade up animation - most common pattern */
