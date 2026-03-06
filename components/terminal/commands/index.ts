@@ -71,25 +71,6 @@ export const COMMANDS: Record<string, CommandHandler> = {
 
 // ── Async commands (fetch real data) ───────────────────────────────────────────
 export const ASYNC_CMDS: Record<string, AsyncCommandHandler> = {
-  games: async () => {
-    return [
-      L("# Arcade Games", col.primary),
-      BR(),
-      L("  Available games at /games:", col.fg),
-      BR(),
-      L("  [x] Snake        - Classic snake game", col.green),
-      L("  [ ] Tetris       - Coming soon", col.muted),
-      L("  [ ] Breakout     - Coming soon", col.muted),
-      L("  [ ] Pong         - Coming soon", col.muted),
-      L("  [ ] 2048         - Coming soon", col.muted),
-      L("  [ ] Minesweeper  - Coming soon", col.muted),
-      L("  ...and 25 more!", col.muted),
-      BR(),
-      L("  Visit /games to play!", col.cyan),
-      BR(),
-    ]
-  },
-
   status: async () => {
     const start = performance.now()
     try {
