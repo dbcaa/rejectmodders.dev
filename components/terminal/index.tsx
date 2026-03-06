@@ -31,17 +31,19 @@ export function TerminalEasterEgg() {
   const dragging = useRef(false)
   const dragOffset = useRef({ x: 0, y: 0 })
 
-  // ── Konami code detection ────────────────────────────────────────────────────
+  // ── Keyboard shortcuts & Konami code ───────────────────────────────────────
   useEffect(() => {
     loadSavedPreferences()
     const KONAMI = ["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"]
     let seq: string[] = []
     const onKey = (e: KeyboardEvent) => {
+      // Ctrl+` or Cmd+` to toggle terminal
       if ((e.ctrlKey || e.metaKey) && e.key === "`") {
         e.preventDefault()
         setOpen(o => !o)
         return
       }
+      // Konami code
       seq.push(e.key)
       if (seq.length > KONAMI.length) seq.shift()
       if (seq.join(",") === KONAMI.join(",")) {
@@ -49,8 +51,15 @@ export function TerminalEasterEgg() {
         seq = []
       }
     }
+    // Listen for command palette open event
+    const onOpenTerminal = () => setOpen(true)
+    
     window.addEventListener("keydown", onKey)
-    return () => window.removeEventListener("keydown", onKey)
+    window.addEventListener("rm:open-terminal", onOpenTerminal)
+    return () => {
+      window.removeEventListener("keydown", onKey)
+      window.removeEventListener("rm:open-terminal", onOpenTerminal)
+    }
   }, [])
 
   // ── Focus input when opened ──────────────────────────────────────────────────
