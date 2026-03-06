@@ -1,8 +1,9 @@
 "use client"
 
 import { useCallback, useEffect, useRef, useState } from "react"
-import { ChevronLeft, ChevronUp, ChevronDown, ChevronRight, RotateCcw } from "lucide-react"
+import { ChevronLeft, ChevronUp, ChevronDown, ChevronRight, RotateCcw, Volume2, VolumeX } from "lucide-react"
 import { saveHS, getHS, usePrimary } from "../helpers"
+import { gameSounds } from "../sounds"
 
 // ── Game Constants ───────────────────────────────────────────────────────────
 const GRID_SIZE = 20
@@ -56,6 +57,7 @@ export function SnakeGame({ onBack }: { primary?: string; onBack: () => void }) 
   const [gameState, setGameState] = useState<GameState>("idle")
   const [score, setScore] = useState(0)
   const [highScore, setHighScore] = useState(0)
+  const [soundEnabled, setSoundEnabled] = useState(true)
 
   // Game state refs for animation loop access
   const snakeRef = useRef<Point[]>([{ x: 10, y: 10 }])
@@ -85,6 +87,7 @@ export function SnakeGame({ onBack }: { primary?: string; onBack: () => void }) 
     if (gameState === "playing") return
     resetGame()
     setGameState("playing")
+    gameSounds.play("start")
 
     const tick = () => {
       const snake = snakeRef.current
@@ -116,10 +119,18 @@ export function SnakeGame({ onBack }: { primary?: string; onBack: () => void }) 
         scoreRef.current++
         setScore(scoreRef.current)
         foodRef.current = randomFood(newSnake)
+        gameSounds.play("eat")
+
+        // Check for speed increase (every 3 points)
+        const newSpeed = getSpeed(scoreRef.current)
+        const oldSpeed = getSpeed(scoreRef.current - 1)
+        if (newSpeed < oldSpeed) {
+          gameSounds.play("levelup")
+        }
 
         // Restart interval with new speed
         if (gameLoopRef.current) clearInterval(gameLoopRef.current)
-        gameLoopRef.current = setInterval(tick, getSpeed(scoreRef.current))
+        gameLoopRef.current = setInterval(tick, newSpeed)
       } else {
         newSnake.pop()
       }
@@ -133,6 +144,7 @@ export function SnakeGame({ onBack }: { primary?: string; onBack: () => void }) 
   const gameOver = useCallback(() => {
     if (gameLoopRef.current) clearInterval(gameLoopRef.current)
     setGameState("gameover")
+    gameSounds.play("die")
 
     const finalScore = scoreRef.current
     const currentHS = getHS("snake")
@@ -391,8 +403,16 @@ export function SnakeGame({ onBack }: { primary?: string; onBack: () => void }) 
           <span className="text-primary font-bold">Score: {score}</span>
           {highScore > 0 && <span className="text-muted-foreground">Best: {highScore}</span>}
           <button
+            onClick={() => setSoundEnabled(gameSounds.toggle())}
+            className="flex items-center gap-1.5 text-muted-foreground hover:text-primary transition-colors"
+            title={soundEnabled ? "Mute sounds" : "Enable sounds"}
+          >
+            {soundEnabled ? <Volume2 className="h-3.5 w-3.5" /> : <VolumeX className="h-3.5 w-3.5" />}
+          </button>
+          <button
             onClick={resetGame}
             className="flex items-center gap-1.5 text-muted-foreground hover:text-primary transition-colors"
+            title="Restart game"
           >
             <RotateCcw className="h-3 w-3" />
           </button>

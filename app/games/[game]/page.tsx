@@ -2,7 +2,11 @@ import { notFound } from "next/navigation"
 import { Navbar } from "@/components/navbar"
 import { FooterSection } from "@/components/footer-section"
 import { GamePageClient } from "@/components/games/game-page-client"
+import { GameComingSoon } from "@/components/games/game-coming-soon"
 import type { Metadata } from "next"
+
+// Games that are fully rewritten and playable
+const ENABLED_GAMES = new Set(["snake"])
 
 const GAME_META: Record<string, { title: string; desc: string }> = {
   snake:           { title: "Snake",          desc: "Classic snake — eat food, avoid walls and yourself." },
@@ -52,10 +56,18 @@ export async function generateMetadata({ params }: { params: Promise<{ game: str
 export default async function GamePage({ params }: { params: Promise<{ game: string }> }) {
   const { game } = await params
   if (!GAME_META[game]) notFound()
+  
+  const isEnabled = ENABLED_GAMES.has(game)
+  const meta = GAME_META[game]
+  
   return (
     <div className="relative min-h-screen">
       <Navbar />
-      <GamePageClient game={game} />
+      {isEnabled ? (
+        <GamePageClient game={game} />
+      ) : (
+        <GameComingSoon title={meta.title} />
+      )}
       <FooterSection />
     </div>
   )
