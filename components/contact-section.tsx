@@ -50,7 +50,7 @@ export function ContactSection() {
   ] : []
 
   return (
-    <section ref={ref} id="contact" className="relative py-24 md:py-32" style={{ overflow: "clip" }}>
+    <section ref={ref} id="contact" className="relative py-24 md:py-32 scroll-mt-20" style={{ overflow: "clip" }}>
       {/* Ambient orb */}
       <div className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full"
         style={{ background: "radial-gradient(circle, oklch(0.45 0.18 15 / 0.07) 0%, transparent 70%)" }} />

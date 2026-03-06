@@ -3,9 +3,7 @@
 import { useState, useEffect, useRef, ComponentType, useCallback } from "react"
 import dynamic from "next/dynamic"
 import { motion } from "framer-motion"
-import { useRouter } from "next/navigation"
-import { Trophy, Play, Gamepad2 } from "lucide-react"
-import { loadHS } from "./games/helpers"
+import { Gamepad2, Clock } from "lucide-react"
 import { EASE, DUR, PAGE_START, PAGE_STEP, SCROLL_STEP } from "@/lib/animation"
 
 // Previews – loaded dynamically so they never block the main thread
@@ -120,13 +118,8 @@ function LazyPreview({ Preview, id }: { Preview: ComponentType; id: string }) {
 }
 
 export function GamesPageContent() {
-  const router = useRouter()
-  const [scores, setScores] = useState<Record<string, number>>({})
   const [activeCategory, setActiveCategory] = useState<Category>("all")
   const [visibleCount, setVisibleCount] = useState(12)
-  const [hovered, setHovered] = useState<string | null>(null)
-
-  useEffect(() => { setScores(loadHS()) }, [])
 
   const filtered = activeCategory === "all" ? GAMES : GAMES.filter(g => g.cat === activeCategory)
   const shown = filtered.slice(0, visibleCount)
@@ -200,33 +193,23 @@ export function GamesPageContent() {
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {shown.map(({ id, label, desc, controls, Preview, cat }, i) => {
-                const hs = scores[id]
                 return (
                   <motion.div
                     key={id}
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: DUR, delay: Math.min(i * SCROLL_STEP, 0.3), ease: EASE }}
-                    onMouseEnter={() => setHovered(id)}
-                    onMouseLeave={() => setHovered(null)}
-                    onClick={() => router.push(`/games/${id}`)}
-                    className="group relative cursor-pointer rounded-2xl border border-border bg-card overflow-hidden
-                      transition-all duration-200 hover:border-primary/40 hover:-translate-y-0.5
-                      hover:shadow-[0_4px_24px_color-mix(in_oklch,var(--primary)_10%,transparent)]"
+                    className="group relative rounded-2xl border border-border bg-card overflow-hidden opacity-75"
                   >
                     {/* Preview */}
                     <div className="relative w-full overflow-hidden bg-zinc-950" style={{ aspectRatio: "16/9" }}>
                       <LazyPreview Preview={Preview} id={id} />
 
-                      {/* Play overlay */}
-                      <div
-                        className="absolute inset-0 flex items-center justify-center bg-black/55
-                          transition-opacity duration-150"
-                        style={{ opacity: hovered === id ? 1 : 0, pointerEvents: "none" }}
-                      >
-                        <div className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground font-mono text-sm font-bold shadow-lg">
-                          <Play className="h-4 w-4 fill-current" />
-                          play
+                      {/* Coming Soon overlay - always visible */}
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/70">
+                        <div className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-muted text-muted-foreground font-mono text-sm font-bold border border-border">
+                          <Clock className="h-4 w-4" />
+                          coming soon
                         </div>
                       </div>
 
@@ -236,23 +219,14 @@ export function GamesPageContent() {
                           {cat}
                         </span>
                       </div>
-
-                      {/* High score badge */}
-                      {hs !== undefined && (
-                        <div className="absolute top-2 left-2 pointer-events-none">
-                          <span className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono bg-black/70 text-yellow-400/90 border border-yellow-400/20 backdrop-blur-sm">
-                            <Trophy className="h-2.5 w-2.5" />{hs}
-                          </span>
-                        </div>
-                      )}
                     </div>
 
                     {/* Info */}
                     <div className="p-4">
-                      <h2 className="font-mono font-bold text-sm text-foreground group-hover:text-primary transition-colors mb-1">
+                      <h2 className="font-mono font-bold text-sm text-muted-foreground mb-1">
                         {label}
                       </h2>
-                      <p className="font-mono text-xs text-muted-foreground leading-relaxed mb-2">{desc}</p>
+                      <p className="font-mono text-xs text-muted-foreground/60 leading-relaxed mb-2">{desc}</p>
                       <p className="font-mono text-[10px] text-muted-foreground/35 truncate">{controls}</p>
                     </div>
                   </motion.div>
