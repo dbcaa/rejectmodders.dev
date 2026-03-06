@@ -7,8 +7,8 @@ import { useRouter } from "next/navigation"
 import { Gamepad2, Clock, Play } from "lucide-react"
 import { EASE, DUR, PAGE_START, PAGE_STEP, SCROLL_STEP } from "@/lib/animation"
 
-// Games that are fully rewritten and enabled
-const ENABLED_GAMES = new Set(["snake"])
+// Games that are fully rewritten and enabled - add game IDs here as they're rebuilt
+const ENABLED_GAMES: Set<string> = new Set(["snake"])
 
 // Previews – loaded dynamically so they never block the main thread
 const SnakePreview         = dynamic(() => import("./games/snake/preview").then(m => ({ default: m.SnakePreview })),         { ssr: false })
