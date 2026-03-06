@@ -121,7 +121,7 @@ export const infoCommands: Record<string, CommandHandler> = {
     L("  GitHub:   github.com/RejectModders", col.cyan),
     BR(),
     L("  Business inquiries welcome.", col.muted),
-    L("  Security reports: security@rejectmodders.dev", col.green),
+    L("  Security reports: liam@rejectmodders.dev", col.green),
     BR(),
   ],
 
