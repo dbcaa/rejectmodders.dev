@@ -26,7 +26,7 @@ export const BOOT_LINES: Line[] = [
 // ── All available command names (for tab completion) ───────────────────────────
 export const ALL_CMDS = [
   "help","whoami","ls","ls -la","pwd","cat about","cat readme","cat vulnradar",
-  "skills","links","projects","friends","contact","spotify",
+  "skills","links","projects","friends","contact","games",
   "status","uptime","date","uname","env","history",
   "echo","ping","curl","hack","matrix","ascii","banner",
   "sudo","rm -rf /","rm -rf / --no-preserve-root","exit","clear",

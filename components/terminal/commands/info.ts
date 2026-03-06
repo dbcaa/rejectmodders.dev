@@ -18,12 +18,13 @@ export const infoCommands: Record<string, CommandHandler> = {
   ],
 
   ls: () => [
-    L("total 6", col.muted),
+    L("total 7", col.muted),
     L("drwxr-xr-x  /", col.muted),
     L("-rw-r--r--  home         /                  [ public ]", col.fg),
     L("-rw-r--r--  about        /about             [ public ]", col.fg),
     L("-rw-r--r--  projects     /projects          [ public ]", col.fg),
     L("-rw-r--r--  friends      /friends           [ public ]", col.fg),
+    L("-rw-r--r--  games        /games             [ public ]", col.fg),
     L("-rw-r--r--  spotify      /spotify           [ public ]", col.fg),
     L("-rw-------  secrets      /???               [ hidden ]", col.red),
     BR(),

@@ -71,32 +71,23 @@ export const COMMANDS: Record<string, CommandHandler> = {
 
 // ── Async commands (fetch real data) ───────────────────────────────────────────
 export const ASYNC_CMDS: Record<string, AsyncCommandHandler> = {
-  spotify: async () => {
-    try {
-      const res = await fetch("/api/spotify")
-      const data = await res.json()
-      if (data.nowPlaying?.isPlaying) {
-        const { title, artist } = data.nowPlaying
-        return [
-          L("Now Playing on Spotify:", col.primary),
-          L(`  ${title}`, col.green),
-          L(`  by ${artist}`, col.muted),
-          BR(),
-        ]
-      }
-      if (data.recentlyPlayed?.length) {
-        const { title, artist } = data.recentlyPlayed[0]
-        return [
-          L("Last played on Spotify:", col.primary),
-          L(`  ${title}`, col.fg),
-          L(`  by ${artist}`, col.muted),
-          BR(),
-        ]
-      }
-      return [L("Spotify: Nothing playing right now.", col.muted), BR()]
-    } catch {
-      return [L("Spotify: Could not fetch data.", col.red), BR()]
-    }
+  games: async () => {
+    return [
+      L("# Arcade Games", col.primary),
+      BR(),
+      L("  Available games at /games:", col.fg),
+      BR(),
+      L("  [x] Snake        - Classic snake game", col.green),
+      L("  [ ] Tetris       - Coming soon", col.muted),
+      L("  [ ] Breakout     - Coming soon", col.muted),
+      L("  [ ] Pong         - Coming soon", col.muted),
+      L("  [ ] 2048         - Coming soon", col.muted),
+      L("  [ ] Minesweeper  - Coming soon", col.muted),
+      L("  ...and 25 more!", col.muted),
+      BR(),
+      L("  Visit /games to play!", col.cyan),
+      BR(),
+    ]
   },
 
   status: async () => {

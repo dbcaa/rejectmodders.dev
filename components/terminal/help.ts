@@ -15,7 +15,7 @@ export const HELP_PAGES: { title: string; rows: [string, string][] }[] = [
     ["projects",           "pinned projects"],
     ["friends",            "list friends"],
     ["contact",            "how to reach me"],
-    ["spotify",            "now playing"],
+    ["games",              "arcade games"],
   ]},
   { title: "SYSTEM", rows: [
     ["date / cal",         "date & calendar"],
