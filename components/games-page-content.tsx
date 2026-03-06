@@ -3,8 +3,12 @@
 import { useState, useEffect, useRef, ComponentType, useCallback } from "react"
 import dynamic from "next/dynamic"
 import { motion } from "framer-motion"
-import { Gamepad2, Clock } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { Gamepad2, Clock, Play } from "lucide-react"
 import { EASE, DUR, PAGE_START, PAGE_STEP, SCROLL_STEP } from "@/lib/animation"
+
+// Games that are fully rewritten and enabled
+const ENABLED_GAMES = new Set(["snake"])
 
 // Previews – loaded dynamically so they never block the main thread
 const SnakePreview         = dynamic(() => import("./games/snake/preview").then(m => ({ default: m.SnakePreview })),         { ssr: false })
@@ -118,8 +122,10 @@ function LazyPreview({ Preview, id }: { Preview: ComponentType; id: string }) {
 }
 
 export function GamesPageContent() {
+  const router = useRouter()
   const [activeCategory, setActiveCategory] = useState<Category>("all")
   const [visibleCount, setVisibleCount] = useState(12)
+  const [hovered, setHovered] = useState<string | null>(null)
 
   const filtered = activeCategory === "all" ? GAMES : GAMES.filter(g => g.cat === activeCategory)
   const shown = filtered.slice(0, visibleCount)
@@ -193,25 +199,50 @@ export function GamesPageContent() {
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
               {shown.map(({ id, label, desc, controls, Preview, cat }, i) => {
+                const isEnabled = ENABLED_GAMES.has(id)
                 return (
                   <motion.div
                     key={id}
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: DUR, delay: Math.min(i * SCROLL_STEP, 0.3), ease: EASE }}
-                    className="group relative rounded-2xl border border-border bg-card overflow-hidden opacity-75"
+                    onMouseEnter={() => isEnabled && setHovered(id)}
+                    onMouseLeave={() => setHovered(null)}
+                    onClick={() => isEnabled && router.push(`/games/${id}`)}
+                    className={[
+                      "group relative rounded-2xl border border-border bg-card overflow-hidden",
+                      "transition-all duration-200",
+                      isEnabled
+                        ? "cursor-pointer hover:border-primary/40 hover:-translate-y-0.5 hover:shadow-[0_4px_24px_color-mix(in_oklch,var(--primary)_10%,transparent)]"
+                        : "opacity-75",
+                    ].join(" ")}
                   >
                     {/* Preview */}
                     <div className="relative w-full overflow-hidden bg-zinc-950" style={{ aspectRatio: "16/9" }}>
                       <LazyPreview Preview={Preview} id={id} />
 
-                      {/* Coming Soon overlay - always visible */}
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/70">
-                        <div className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-muted text-muted-foreground font-mono text-sm font-bold border border-border">
-                          <Clock className="h-4 w-4" />
-                          coming soon
+                      {/* Enabled: Play overlay on hover */}
+                      {isEnabled && (
+                        <div
+                          className="absolute inset-0 flex items-center justify-center bg-black/55 transition-opacity duration-150"
+                          style={{ opacity: hovered === id ? 1 : 0, pointerEvents: "none" }}
+                        >
+                          <div className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground font-mono text-sm font-bold shadow-lg">
+                            <Play className="h-4 w-4 fill-current" />
+                            play
+                          </div>
                         </div>
-                      </div>
+                      )}
+
+                      {/* Disabled: Coming Soon overlay */}
+                      {!isEnabled && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/70">
+                          <div className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-muted text-muted-foreground font-mono text-sm font-bold border border-border">
+                            <Clock className="h-4 w-4" />
+                            coming soon
+                          </div>
+                        </div>
+                      )}
 
                       {/* Category badge */}
                       <div className="absolute top-2 right-2 pointer-events-none">
@@ -223,10 +254,16 @@ export function GamesPageContent() {
 
                     {/* Info */}
                     <div className="p-4">
-                      <h2 className="font-mono font-bold text-sm text-muted-foreground mb-1">
+                      <h2 className={[
+                        "font-mono font-bold text-sm mb-1",
+                        isEnabled ? "text-foreground group-hover:text-primary transition-colors" : "text-muted-foreground"
+                      ].join(" ")}>
                         {label}
                       </h2>
-                      <p className="font-mono text-xs text-muted-foreground/60 leading-relaxed mb-2">{desc}</p>
+                      <p className={[
+                        "font-mono text-xs leading-relaxed mb-2",
+                        isEnabled ? "text-muted-foreground" : "text-muted-foreground/60"
+                      ].join(" ")}>{desc}</p>
                       <p className="font-mono text-[10px] text-muted-foreground/35 truncate">{controls}</p>
                     </div>
                   </motion.div>

@@ -1,90 +1,188 @@
 "use client"
+
 import { useEffect, useRef } from "react"
 import { usePrimary } from "../helpers"
 
+// ── Preview Constants ────────────────────────────────────────────────────────
+const CELL = 10
+const SPEED = 80
+
 export function SnakePreview() {
-  const ref = useRef<HTMLCanvasElement>(null)
+  const canvasRef = useRef<HTMLCanvasElement>(null)
   const primary = usePrimary()
 
   useEffect(() => {
-    const canvas = ref.current; if (!canvas) return
+    const canvas = canvasRef.current
+    if (!canvas) return
+
     const ctx = canvas.getContext("2d")!
-    const W = canvas.width, H = canvas.height
-    const CELL = 11
-    const COLS = Math.floor(W / CELL), ROWS = Math.floor(H / CELL)
-    const STEP_MS = 80
+    const W = canvas.width
+    const H = canvas.height
+    const COLS = Math.floor(W / CELL)
+    const ROWS = Math.floor(H / CELL)
 
-    // Build a zig-zag demo path
-    const buildPath = (): [number, number][] => {
-      const p: [number, number][] = []
-      for (let r = 1; r < ROWS - 1; r++) {
-        if (r % 2 === 1) for (let c = 1; c < COLS - 1; c++) p.push([r, c])
-        else for (let c = COLS - 2; c >= 1; c--) p.push([r, c])
-      }
-      return p
+    // Demo snake state
+    let snake = [
+      { x: 8, y: 8 },
+      { x: 7, y: 8 },
+      { x: 6, y: 8 },
+      { x: 5, y: 8 },
+      { x: 4, y: 8 },
+    ]
+    let direction = { x: 1, y: 0 }
+    let food = { x: 14, y: 8 }
+    let lastMove = 0
+    let raf = 0
+
+    // AI: simple chase food logic with collision avoidance
+    const getNextDirection = () => {
+      const head = snake[0]
+      const dx = food.x - head.x
+      const dy = food.y - head.y
+
+      const candidates = [
+        { x: 1, y: 0 },
+        { x: -1, y: 0 },
+        { x: 0, y: 1 },
+        { x: 0, y: -1 },
+      ]
+
+      // Filter out reverse direction and collisions
+      const valid = candidates.filter((d) => {
+        // Can't reverse
+        if (d.x === -direction.x && d.y === -direction.y) return false
+        const next = { x: head.x + d.x, y: head.y + d.y }
+        // Wall check
+        if (next.x < 0 || next.x >= COLS || next.y < 0 || next.y >= ROWS) return false
+        // Self check
+        if (snake.some((s) => s.x === next.x && s.y === next.y)) return false
+        return true
+      })
+
+      if (valid.length === 0) return direction
+
+      // Prefer direction toward food
+      valid.sort((a, b) => {
+        const aDist = Math.abs(head.x + a.x - food.x) + Math.abs(head.y + a.y - food.y)
+        const bDist = Math.abs(head.x + b.x - food.x) + Math.abs(head.y + b.y - food.y)
+        return aDist - bDist
+      })
+
+      return valid[0]
     }
-    const PATH = buildPath()
-    if (!PATH.length) return
 
-    let headIdx = 0
-    let len = 9
-    const foodIdx = () => (headIdx + len + 8) % PATH.length
-    let food = PATH[foodIdx()]
-    let snake: [number, number][] = Array.from({ length: len }, (_, i) => PATH[(headIdx - i + PATH.length) % PATH.length])
-    let lastStep = 0, raf = 0
+    const randomFood = () => {
+      let f
+      do {
+        f = {
+          x: Math.floor(Math.random() * (COLS - 2)) + 1,
+          y: Math.floor(Math.random() * (ROWS - 2)) + 1,
+        }
+      } while (snake.some((s) => s.x === f.x && s.y === f.y))
+      return f
+    }
 
-    const draw = (now: number) => {
-      if (now - lastStep >= STEP_MS) {
-        lastStep = now
-        headIdx = (headIdx + 1) % PATH.length
-        const head = PATH[headIdx]
-        snake = [head, ...snake.slice(0, len - 1)]
-        if (head[0] === food[0] && head[1] === food[1]) {
-          len = Math.min(len + 4, PATH.length - 6)
-          food = PATH[foodIdx()]
+    const draw = (time: number) => {
+      // Move snake
+      if (time - lastMove >= SPEED) {
+        lastMove = time
+        direction = getNextDirection()
+
+        const head = {
+          x: snake[0].x + direction.x,
+          y: snake[0].y + direction.y,
+        }
+
+        // Collision = reset
+        if (
+          head.x < 0 ||
+          head.x >= COLS ||
+          head.y < 0 ||
+          head.y >= ROWS ||
+          snake.some((s) => s.x === head.x && s.y === head.y)
+        ) {
+          snake = [
+            { x: 8, y: 8 },
+            { x: 7, y: 8 },
+            { x: 6, y: 8 },
+            { x: 5, y: 8 },
+            { x: 4, y: 8 },
+          ]
+          direction = { x: 1, y: 0 }
+          food = randomFood()
+        } else {
+          snake = [head, ...snake]
+          if (head.x === food.x && head.y === food.y) {
+            food = randomFood()
+          } else {
+            snake.pop()
+          }
         }
       }
 
-      ctx.fillStyle = "#080808"; ctx.fillRect(0, 0, W, H)
+      // Clear
+      ctx.fillStyle = "#0a0a0a"
+      ctx.fillRect(0, 0, W, H)
 
       // Grid dots
-      ctx.fillStyle = "#ffffff07"
-      for (let x = 0; x < COLS; x++) for (let y = 0; y < ROWS; y++) {
-        ctx.fillRect(x * CELL + CELL / 2 - 0.5, y * CELL + CELL / 2 - 0.5, 1, 1)
+      ctx.fillStyle = "#ffffff08"
+      for (let x = 0; x < COLS; x++) {
+        for (let y = 0; y < ROWS; y++) {
+          ctx.fillRect(x * CELL + CELL / 2 - 0.5, y * CELL + CELL / 2 - 0.5, 1, 1)
+        }
       }
 
       // Food
-      const pulse = 0.82 + 0.18 * Math.sin(now / 200)
-      const fx = food[1] * CELL + CELL / 2, fy = food[0] * CELL + CELL / 2
-      ctx.fillStyle = "#fbbf2466"
-      ctx.beginPath(); ctx.arc(fx, fy, CELL * 0.55 * pulse, 0, Math.PI * 2); ctx.fill()
+      const pulse = 0.85 + 0.15 * Math.sin(time / 180)
+      const fx = food.x * CELL + CELL / 2
+      const fy = food.y * CELL + CELL / 2
+      const fr = (CELL / 2 - 1) * pulse
+
+      ctx.fillStyle = "#fbbf2444"
+      ctx.beginPath()
+      ctx.arc(fx, fy, fr * 1.8, 0, Math.PI * 2)
+      ctx.fill()
+
       ctx.fillStyle = "#fbbf24"
-      ctx.beginPath(); ctx.arc(fx, fy, CELL * 0.38 * pulse, 0, Math.PI * 2); ctx.fill()
+      ctx.beginPath()
+      ctx.arc(fx, fy, fr, 0, Math.PI * 2)
+      ctx.fill()
 
       // Snake
-      for (let i = snake.length - 1; i >= 0; i--) {
-        const [r, c] = snake[i]
-        const t = 1 - i / snake.length
-        ctx.globalAlpha = Math.max(0.1, t * 0.9 + 0.1)
+      snake.forEach((seg, i) => {
+        const isHead = i === 0
+        const alpha = Math.max(0.2, 1 - (i / snake.length) * 0.8)
+        ctx.globalAlpha = alpha
+
         ctx.fillStyle = primary
-        const pad = i === 0 ? 1 : Math.min(3, 1 + i * 0.15)
-        const radius = i === 0 ? 4 : 2
+        const pad = isHead ? 0.5 : 1
+        const radius = isHead ? 3 : 2
+
         ctx.beginPath()
-        ctx.roundRect(c * CELL + pad, r * CELL + pad, CELL - pad * 2, CELL - pad * 2, radius)
+        ctx.roundRect(seg.x * CELL + pad, seg.y * CELL + pad, CELL - pad * 2, CELL - pad * 2, radius)
         ctx.fill()
-        if (i === 0) {
+
+        if (isHead) {
           ctx.fillStyle = "rgba(255,255,255,0.2)"
           ctx.beginPath()
-          ctx.roundRect(c * CELL + pad + 1, r * CELL + pad + 1, CELL - pad * 2 - 2, (CELL - pad * 2) / 2 - 1, 3)
+          ctx.roundRect(
+            seg.x * CELL + pad + 1,
+            seg.y * CELL + pad + 1,
+            CELL - pad * 2 - 2,
+            (CELL - pad * 2) / 2 - 1,
+            2
+          )
           ctx.fill()
         }
-      }
+      })
       ctx.globalAlpha = 1
+
       raf = requestAnimationFrame(draw)
     }
+
     raf = requestAnimationFrame(draw)
     return () => cancelAnimationFrame(raf)
   }, [primary])
 
-  return <canvas ref={ref} width={280} height={160} className="w-full h-full" />
+  return <canvas ref={canvasRef} width={280} height={160} className="w-full h-full" />
 }
