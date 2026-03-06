@@ -5,7 +5,7 @@ import { usePrimary } from "../helpers"
 
 // ── Preview Constants ────────────────────────────────────────────────────────
 const CELL = 10
-const SPEED = 80
+const SPEED = 100 // Slightly slower for preview
 
 export function SnakePreview() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
@@ -21,55 +21,19 @@ export function SnakePreview() {
     const COLS = Math.floor(W / CELL)
     const ROWS = Math.floor(H / CELL)
 
-    // Demo snake state
+    // Game state
     let snake = [
       { x: 8, y: 8 },
       { x: 7, y: 8 },
       { x: 6, y: 8 },
-      { x: 5, y: 8 },
-      { x: 4, y: 8 },
     ]
     let direction = { x: 1, y: 0 }
+    let nextDirection = { x: 1, y: 0 }
     let food = { x: 14, y: 8 }
     let lastMove = 0
     let raf = 0
-
-    // AI: simple chase food logic with collision avoidance
-    const getNextDirection = () => {
-      const head = snake[0]
-      const dx = food.x - head.x
-      const dy = food.y - head.y
-
-      const candidates = [
-        { x: 1, y: 0 },
-        { x: -1, y: 0 },
-        { x: 0, y: 1 },
-        { x: 0, y: -1 },
-      ]
-
-      // Filter out reverse direction and collisions
-      const valid = candidates.filter((d) => {
-        // Can't reverse
-        if (d.x === -direction.x && d.y === -direction.y) return false
-        const next = { x: head.x + d.x, y: head.y + d.y }
-        // Wall check
-        if (next.x < 0 || next.x >= COLS || next.y < 0 || next.y >= ROWS) return false
-        // Self check
-        if (snake.some((s) => s.x === next.x && s.y === next.y)) return false
-        return true
-      })
-
-      if (valid.length === 0) return direction
-
-      // Prefer direction toward food
-      valid.sort((a, b) => {
-        const aDist = Math.abs(head.x + a.x - food.x) + Math.abs(head.y + a.y - food.y)
-        const bDist = Math.abs(head.x + b.x - food.x) + Math.abs(head.y + b.y - food.y)
-        return aDist - bDist
-      })
-
-      return valid[0]
-    }
+    let movesSinceLastTurn = 0
+    let targetDirection: { x: number; y: number } | null = null
 
     const randomFood = () => {
       let f
@@ -82,45 +46,116 @@ export function SnakePreview() {
       return f
     }
 
+    const resetGame = () => {
+      snake = [
+        { x: 8, y: 8 },
+        { x: 7, y: 8 },
+        { x: 6, y: 8 },
+      ]
+      direction = { x: 1, y: 0 }
+      nextDirection = { x: 1, y: 0 }
+      food = randomFood()
+      movesSinceLastTurn = 0
+      targetDirection = null
+    }
+
+    // Human-like AI: doesn't always take optimal path, reacts with delay
+    const thinkLikeHuman = () => {
+      const head = snake[0]
+      movesSinceLastTurn++
+
+      // Humans don't turn every single frame - keep going straight sometimes
+      if (movesSinceLastTurn < 2 + Math.floor(Math.random() * 2)) {
+        // Check if we can continue in current direction
+        const nextPos = { x: head.x + direction.x, y: head.y + direction.y }
+        const willHitWall = nextPos.x < 0 || nextPos.x >= COLS || nextPos.y < 0 || nextPos.y >= ROWS
+        const willHitSelf = snake.some((s) => s.x === nextPos.x && s.y === nextPos.y)
+        
+        if (!willHitWall && !willHitSelf) {
+          return // Keep going straight
+        }
+      }
+
+      // Time to make a decision
+      const dx = food.x - head.x
+      const dy = food.y - head.y
+
+      // Build list of possible turns (no reversing)
+      const candidates: { x: number; y: number }[] = []
+      
+      if (direction.x !== 0) {
+        // Currently moving horizontally, can turn up or down
+        candidates.push({ x: 0, y: -1 }, { x: 0, y: 1 })
+        // Can also keep going same direction
+        if (direction.x === 1) candidates.push({ x: 1, y: 0 })
+        else candidates.push({ x: -1, y: 0 })
+      } else {
+        // Currently moving vertically, can turn left or right
+        candidates.push({ x: -1, y: 0 }, { x: 1, y: 0 })
+        // Can also keep going same direction
+        if (direction.y === 1) candidates.push({ x: 0, y: 1 })
+        else candidates.push({ x: 0, y: -1 })
+      }
+
+      // Filter out moves that would cause immediate death
+      const safe = candidates.filter((d) => {
+        const next = { x: head.x + d.x, y: head.y + d.y }
+        if (next.x < 0 || next.x >= COLS || next.y < 0 || next.y >= ROWS) return false
+        if (snake.some((s) => s.x === next.x && s.y === next.y)) return false
+        return true
+      })
+
+      if (safe.length === 0) return // No safe moves, will die
+
+      // Pick a direction - mostly chase food, but sometimes make "mistakes"
+      if (Math.random() < 0.85) {
+        // Chase food - pick direction that gets closer
+        safe.sort((a, b) => {
+          const aDist = Math.abs(head.x + a.x - food.x) + Math.abs(head.y + a.y - food.y)
+          const bDist = Math.abs(head.x + b.x - food.x) + Math.abs(head.y + b.y - food.y)
+          return aDist - bDist
+        })
+        nextDirection = safe[0]
+      } else {
+        // Random safe direction (human mistake/exploration)
+        nextDirection = safe[Math.floor(Math.random() * safe.length)]
+      }
+
+      movesSinceLastTurn = 0
+    }
+
     const draw = (time: number) => {
-      // Move snake
+      // Move snake at fixed intervals
       if (time - lastMove >= SPEED) {
         lastMove = time
-        direction = getNextDirection()
+
+        // AI thinks before moving
+        thinkLikeHuman()
+        direction = nextDirection
 
         const head = {
           x: snake[0].x + direction.x,
           y: snake[0].y + direction.y,
         }
 
-        // Collision = reset
-        if (
-          head.x < 0 ||
-          head.x >= COLS ||
-          head.y < 0 ||
-          head.y >= ROWS ||
-          snake.some((s) => s.x === head.x && s.y === head.y)
-        ) {
-          snake = [
-            { x: 8, y: 8 },
-            { x: 7, y: 8 },
-            { x: 6, y: 8 },
-            { x: 5, y: 8 },
-            { x: 4, y: 8 },
-          ]
-          direction = { x: 1, y: 0 }
-          food = randomFood()
+        // Check collision - game over, reset
+        const hitWall = head.x < 0 || head.x >= COLS || head.y < 0 || head.y >= ROWS
+        const hitSelf = snake.some((s) => s.x === head.x && s.y === head.y)
+
+        if (hitWall || hitSelf) {
+          resetGame()
         } else {
           snake = [head, ...snake]
           if (head.x === food.x && head.y === food.y) {
             food = randomFood()
+            // Keep tail (grow)
           } else {
             snake.pop()
           }
         }
       }
 
-      // Clear
+      // === RENDER ===
       ctx.fillStyle = "#0a0a0a"
       ctx.fillRect(0, 0, W, H)
 
@@ -132,7 +167,7 @@ export function SnakePreview() {
         }
       }
 
-      // Food
+      // Food with pulse
       const pulse = 0.85 + 0.15 * Math.sin(time / 180)
       const fx = food.x * CELL + CELL / 2
       const fy = food.y * CELL + CELL / 2
@@ -148,10 +183,10 @@ export function SnakePreview() {
       ctx.arc(fx, fy, fr, 0, Math.PI * 2)
       ctx.fill()
 
-      // Snake
+      // Snake body
       snake.forEach((seg, i) => {
         const isHead = i === 0
-        const alpha = Math.max(0.2, 1 - (i / snake.length) * 0.8)
+        const alpha = Math.max(0.3, 1 - (i / snake.length) * 0.7)
         ctx.globalAlpha = alpha
 
         ctx.fillStyle = primary
@@ -163,7 +198,7 @@ export function SnakePreview() {
         ctx.fill()
 
         if (isHead) {
-          ctx.fillStyle = "rgba(255,255,255,0.2)"
+          ctx.fillStyle = "rgba(255,255,255,0.25)"
           ctx.beginPath()
           ctx.roundRect(
             seg.x * CELL + pad + 1,
