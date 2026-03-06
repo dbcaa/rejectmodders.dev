@@ -50,7 +50,7 @@ export async function generateMetadata({ params }: { params: Promise<{ game: str
   const { game } = await params
   const meta = GAME_META[game]
   if (!meta) return { title: "Game Not Found" }
-  return { title: `${meta.title} | RejectModders`, description: meta.desc }
+  return { title: meta.title, description: meta.desc }
 }
 
 export default async function GamePage({ params }: { params: Promise<{ game: string }> }) {
