@@ -1,5 +1,7 @@
 "use client"
 
+import { motion, useInView } from "framer-motion"
+import { useRef } from "react"
 import { ArrowRight } from "lucide-react"
 
 const orgs = [
@@ -22,23 +24,44 @@ const orgs = [
 ]
 
 export function OrgsSection() {
+	const ref = useRef(null)
+	const isInView = useInView(ref, { once: true, margin: "-100px" })
+
 	return (
-		<section id="orgs" className="relative py-24 md:py-32" style={{ overflow: "clip" }}>
+		<section ref={ref} id="orgs" className="relative py-24 md:py-32" style={{ overflow: "clip" }}>
 			<div className="mx-auto max-w-6xl px-4">
 				{/* Header */}
-				<div className="mb-12">
+				<motion.div 
+					initial={false}
+					animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+					transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+					className="mb-12"
+				>
 					<span className="font-mono text-sm text-primary">{"// organizations"}</span>
 					<h2 className="mt-2 text-3xl font-bold text-foreground md:text-4xl">Where I Build</h2>
-					<div className="mt-2 h-1 w-16 rounded-full bg-primary" />
-					<p className="mt-4 max-w-lg text-muted-foreground">
+					<motion.div 
+						initial={false}
+						animate={isInView ? { scaleX: 1 } : { scaleX: 0 }}
+						transition={{ duration: 0.5, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+						className="mt-2 h-1 w-16 rounded-full bg-primary origin-left" 
+					/>
+					<motion.p 
+						initial={false}
+						animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+						transition={{ duration: 0.4, delay: 0.15, ease: [0.25, 0.1, 0.25, 1] }}
+						className="mt-4 max-w-lg text-muted-foreground"
+					>
 						Organizations I{"'"}ve founded and contributed to. Disutils Team is now inactive as I focus on VulnRadar.
-					</p>
-				</div>
+					</motion.p>
+				</motion.div>
 
 				<div className="grid gap-6 md:grid-cols-2">
-					{orgs.map((org) => (
-						<a
+					{orgs.map((org, i) => (
+						<motion.a
 							key={org.name}
+							initial={false}
+							animate={isInView ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 30, scale: 0.98 }}
+							transition={{ duration: 0.5, delay: 0.2 + i * 0.15, ease: [0.25, 0.1, 0.25, 1] }}
 							href={org.url}
 							target="_blank"
 							rel="noopener noreferrer"
@@ -74,17 +97,20 @@ export function OrgsSection() {
 								<p className="mb-5 text-sm leading-relaxed text-muted-foreground">{org.description}</p>
 
 								<div className="flex flex-wrap gap-2">
-									{org.highlights.map((h) => (
-										<span
+									{org.highlights.map((h, hi) => (
+										<motion.span
 											key={h}
+											initial={false}
+											animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
+											transition={{ duration: 0.3, delay: 0.4 + i * 0.15 + hi * 0.05, ease: [0.25, 0.1, 0.25, 1] }}
 											className="rounded-md border border-border bg-secondary px-2.5 py-1 font-mono text-[11px] text-muted-foreground group-hover:border-primary/20 group-hover:text-foreground"
 										>
 											{h}
-										</span>
+										</motion.span>
 									))}
 								</div>
 							</div>
-						</a>
+						</motion.a>
 					))}
 				</div>
 			</div>

@@ -1,6 +1,7 @@
 "use client"
 
-import { motion } from "framer-motion"
+import { motion, useInView } from "framer-motion"
+import { useRef } from "react"
 import { Heart, MessageCircle, Github as GitHubIcon, Twitter, Globe, Youtube, User, Mail } from "lucide-react"
 import { GITHUB_REPO_URL } from "@/config/constants"
 
@@ -32,23 +33,50 @@ function getAvatar(friend: Friend): string | null {
 export function FriendsPageContent({ friends }: { friends: Friend[] }) {
   const gf = friends.find((f) => f.isGF)
   const friendsList = friends.filter((f) => !f.isGF).sort((a, b) => a.name.localeCompare(b.name))
+  
+  const headerRef = useRef(null)
+  const prRef = useRef(null)
+  const gfRef = useRef(null)
+  const gridRef = useRef(null)
+  
+  const headerInView = useInView(headerRef, { once: true, margin: "-100px" })
+  const prInView = useInView(prRef, { once: true, margin: "-100px" })
+  const gfInView = useInView(gfRef, { once: true, margin: "-100px" })
+  const gridInView = useInView(gridRef, { once: true, margin: "-100px" })
 
   return (
     <div className="relative pt-24 pb-16 md:pt-32 md:pb-24" style={{ overflow: "clip" }}>
       <div className="mx-auto max-w-5xl px-4">
         {/* Header */}
-        <div className="mb-12">
+        <motion.div 
+          ref={headerRef}
+          initial={false}
+          animate={headerInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+          className="mb-12"
+        >
           <span className="font-mono text-sm text-primary inline-block">{'// friends'}</span>
           <h1 className="mt-2 text-4xl font-bold text-foreground md:text-5xl lg:text-6xl">
             My <span className="text-gradient">People</span>
           </h1>
-          <p className="mt-4 max-w-lg text-lg leading-relaxed text-muted-foreground">
+          <motion.p 
+            initial={false}
+            animate={headerInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+            transition={{ duration: 0.4, delay: 0.1, ease: [0.25, 0.1, 0.25, 1] }}
+            className="mt-4 max-w-lg text-lg leading-relaxed text-muted-foreground"
+          >
             These are the people who actually matter to me. Wouldn't trade any of them.
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
         {/* PR callout */}
-        <div className="mb-12">
+        <motion.div 
+          ref={prRef}
+          initial={false}
+          animate={prInView ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 30, scale: 0.98 }}
+          transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+          className="mb-12"
+        >
           <div className="relative overflow-hidden rounded-2xl border border-border bg-card p-6 md:p-8">
             <div
               className="pointer-events-none absolute inset-0 opacity-[0.035]"
@@ -56,14 +84,24 @@ export function FriendsPageContent({ friends }: { friends: Friend[] }) {
             />
             <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex flex-col gap-1.5">
-                <span className="font-mono text-xs text-primary">{'// wanna be here?'}</span>
+                <motion.span 
+                  initial={false}
+                  animate={prInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -10 }}
+                  transition={{ duration: 0.3, delay: 0.1, ease: [0.25, 0.1, 0.25, 1] }}
+                  className="font-mono text-xs text-primary"
+                >
+                  {'// wanna be here?'}
+                </motion.span>
                 <h2 className="text-xl font-bold text-foreground md:text-2xl">Think you belong on this list?</h2>
                 <p className="max-w-md text-sm leading-relaxed text-muted-foreground">
                   If we know each other, open a pull request on the repo and add yourself to{" "}
                   <code className="rounded bg-secondary px-1 py-0.5 font-mono text-xs text-primary">data/friends.json</code>.
                 </p>
               </div>
-              <a
+              <motion.a
+                initial={false}
+                animate={prInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
+                transition={{ duration: 0.4, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
                 href={GITHUB_REPO_URL}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -71,14 +109,20 @@ export function FriendsPageContent({ friends }: { friends: Friend[] }) {
               >
                 <GitHubIcon className="h-4 w-4" />
                 Open a PR
-              </a>
+              </motion.a>
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* GF Section */}
         {gf && (
-          <div className="mb-12">
+          <motion.div 
+            ref={gfRef}
+            initial={false}
+            animate={gfInView ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 30, scale: 0.98 }}
+            transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+            className="mb-12"
+          >
             <div className="card-hover relative overflow-hidden rounded-2xl border border-primary/30 bg-card p-6 md:p-8">
               <div
                 className="pointer-events-none absolute inset-0 opacity-[0.04]"
@@ -86,7 +130,12 @@ export function FriendsPageContent({ friends }: { friends: Friend[] }) {
               />
 
               <div className="relative flex flex-col items-center gap-5 sm:flex-row sm:items-start">
-                <div className="relative hover:scale-105">
+                <motion.div 
+                  initial={false}
+                  animate={gfInView ? { scale: 1, opacity: 1 } : { scale: 0.8, opacity: 0 }}
+                  transition={{ duration: 0.5, delay: 0.1, ease: [0.25, 0.1, 0.25, 1] }}
+                  className="relative hover:scale-105"
+                >
                   {getAvatar(gf) ? (
                     <img
                       src={getAvatar(gf)!}
@@ -105,18 +154,42 @@ export function FriendsPageContent({ friends }: { friends: Friend[] }) {
                   >
                     <Heart className="h-3.5 w-3.5 fill-primary text-primary" />
                   </motion.div>
-                </div>
+                </motion.div>
 
                 <div className="flex-1 text-center sm:text-left">
-                  <div className="mb-1 flex items-center justify-center gap-2 sm:justify-start">
+                  <motion.div 
+                    initial={false}
+                    animate={gfInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+                    transition={{ duration: 0.4, delay: 0.15, ease: [0.25, 0.1, 0.25, 1] }}
+                    className="mb-1 flex items-center justify-center gap-2 sm:justify-start"
+                  >
                     <span className="rounded-full border border-primary/30 bg-primary/10 px-3 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-wider text-primary">
                       Taken
                     </span>
-                  </div>
-                  <h2 className="text-2xl font-bold text-foreground">{gf.name}</h2>
-                  <p className="mt-1 text-sm text-muted-foreground">The most important person in my life.</p>
+                  </motion.div>
+                  <motion.h2 
+                    initial={false}
+                    animate={gfInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+                    transition={{ duration: 0.4, delay: 0.2, ease: [0.25, 0.1, 0.25, 1] }}
+                    className="text-2xl font-bold text-foreground"
+                  >
+                    {gf.name}
+                  </motion.h2>
+                  <motion.p 
+                    initial={false}
+                    animate={gfInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+                    transition={{ duration: 0.4, delay: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
+                    className="mt-1 text-sm text-muted-foreground"
+                  >
+                    The most important person in my life.
+                  </motion.p>
 
-                  <div className="mt-4 flex flex-wrap justify-center gap-2 sm:justify-start">
+                  <motion.div 
+                    initial={false}
+                    animate={gfInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+                    transition={{ duration: 0.4, delay: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+                    className="mt-4 flex flex-wrap justify-center gap-2 sm:justify-start"
+                  >
                     {socialLinks.map((social) => {
                       const value = gf[social.key]
                       if (!value) return null
@@ -133,25 +206,38 @@ export function FriendsPageContent({ friends }: { friends: Friend[] }) {
                         </a>
                       )
                     })}
-                  </div>
+                  </motion.div>
                 </div>
               </div>
             </div>
-          </div>
+          </motion.div>
         )}
 
         {/* Friends Grid */}
         {friendsList.length > 0 && (
-          <>
-            <div className="mb-6 flex items-center gap-3">
+          <div ref={gridRef}>
+            <motion.div 
+              initial={false}
+              animate={gridInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+              transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+              className="mb-6 flex items-center gap-3"
+            >
               <span className="font-mono text-sm text-primary">{'// the crew'}</span>
-              <div className="h-px flex-1 bg-border" />
-            </div>
+              <motion.div 
+                initial={false}
+                animate={gridInView ? { scaleX: 1 } : { scaleX: 0 }}
+                transition={{ duration: 0.6, delay: 0.1, ease: [0.25, 0.1, 0.25, 1] }}
+                className="h-px flex-1 bg-border origin-left" 
+              />
+            </motion.div>
 
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {friendsList.map((friend) => (
-                <div
+              {friendsList.map((friend, i) => (
+                <motion.div
                   key={friend.name}
+                  initial={false}
+                  animate={gridInView ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 20, scale: 0.95 }}
+                  transition={{ duration: 0.4, delay: 0.1 + i * 0.05, ease: [0.25, 0.1, 0.25, 1] }}
                   className="card-hover group rounded-xl border border-border bg-card p-5"
                 >
                   <div className="mb-4 flex items-center gap-3">
@@ -209,18 +295,23 @@ export function FriendsPageContent({ friends }: { friends: Friend[] }) {
                       <span className="font-mono text-[10px] text-muted-foreground/40">No links</span>
                     )}
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
-          </>
+          </div>
         )}
 
         {/* Empty state */}
         {friendsList.length === 0 && !gf && (
-          <div className="py-16 text-center">
+          <motion.div 
+            initial={false}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.4 }}
+            className="py-16 text-center"
+          >
             <Heart className="mx-auto mb-4 h-12 w-12 text-muted-foreground/20" />
             <p className="font-mono text-sm text-muted-foreground">Friends list is being updated...</p>
-          </div>
+          </motion.div>
         )}
 
       </div>

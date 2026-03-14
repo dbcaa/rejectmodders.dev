@@ -1,5 +1,6 @@
 "use client"
 
+import { motion, useInView } from "framer-motion"
 import { useRef, useEffect, useState } from "react"
 import {
   Shield, Code2, Terminal, MapPin, Calendar, ExternalLink,
@@ -28,18 +29,37 @@ const timelineItems = [
   { year: "Early 2026", title: "Right Now", description: "Growing VulnRadar, shipping more open-source security tools, and trying to get better every day.", icon: Rocket, tag: "Present" },
 ]
 
-function SectionHeader({ tag, title }: { tag: string; title: string }) {
+function SectionHeader({ tag, title, isInView }: { tag: string; title: string; isInView: boolean }) {
   return (
-    <div className="mb-10">
+    <motion.div 
+      initial={false}
+      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+      transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+      className="mb-10"
+    >
       <span className="font-mono text-sm text-primary inline-block">{tag}</span>
       <h2 className="mt-2 text-3xl font-bold text-foreground md:text-4xl">{title}</h2>
-      <div className="mt-2 h-1 w-16 rounded-full bg-primary" />
-    </div>
+      <motion.div 
+        initial={false}
+        animate={isInView ? { scaleX: 1 } : { scaleX: 0 }}
+        transition={{ duration: 0.5, delay: 0.15, ease: [0.25, 0.1, 0.25, 1] }}
+        className="mt-2 h-1 w-16 rounded-full bg-primary origin-left" 
+      />
+    </motion.div>
   )
 }
 
 export function AboutPageContent() {
   const [stats, setStats] = useState<GitHubStats | null>(null)
+  const heroRef = useRef(null)
+  const skillsRef = useRef(null)
+  const orgsRef = useRef(null)
+  const timelineRef = useRef(null)
+  
+  const heroInView = useInView(heroRef, { once: true, margin: "-100px" })
+  const skillsInView = useInView(skillsRef, { once: true, margin: "-100px" })
+  const orgsInView = useInView(orgsRef, { once: true, margin: "-100px" })
+  const timelineInView = useInView(timelineRef, { once: true, margin: "-100px" })
   
   useEffect(() => {
     fetch("https://api.github.com/users/RejectModders")
@@ -51,27 +71,45 @@ export function AboutPageContent() {
       <div className="mx-auto max-w-5xl px-4">
 
         {/* Hero */}
-        <div className="mb-20">
-          <div className="mb-8">
+        <div ref={heroRef} className="mb-20">
+          <motion.div 
+            initial={false}
+            animate={heroInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+            className="mb-8"
+          >
             <span className="font-mono text-sm text-primary inline-block">{'// about'}</span>
             <h1 className="mt-2 text-4xl font-bold text-foreground md:text-5xl lg:text-6xl">
               About <span className="text-gradient">Me</span>
             </h1>
-          </div>
+          </motion.div>
 
           <div className="grid gap-8 lg:grid-cols-3">
             {/* Avatar + stats */}
-            <div className="flex flex-col items-center lg:items-start">
+            <motion.div 
+              initial={false}
+              animate={heroInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+              transition={{ duration: 0.5, delay: 0.1, ease: [0.25, 0.1, 0.25, 1] }}
+              className="flex flex-col items-center lg:items-start"
+            >
               {stats?.avatar_url && (
                 <div className="relative mb-6">
-                  <img 
+                  <motion.img 
+                    initial={false}
+                    animate={heroInView ? { scale: 1, opacity: 1 } : { scale: 0.9, opacity: 0 }}
+                    transition={{ duration: 0.5, delay: 0.15, ease: [0.25, 0.1, 0.25, 1] }}
                     src={`/api/avatar?url=${encodeURIComponent(stats.avatar_url)}`} 
                     alt="RejectModders" 
                     className="relative h-40 w-40 rounded-2xl border-2 border-primary/20 object-cover hover:scale-105" 
                   />
-                  <div className="absolute -bottom-2 -right-2 rounded-full border border-primary/30 bg-background px-3 py-1 font-mono text-xs text-primary animate-pulse-glow">
+                  <motion.div 
+                    initial={false}
+                    animate={heroInView ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
+                    transition={{ duration: 0.4, delay: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+                    className="absolute -bottom-2 -right-2 rounded-full border border-primary/30 bg-background px-3 py-1 font-mono text-xs text-primary animate-pulse-glow"
+                  >
                     Hireable
-                  </div>
+                  </motion.div>
                 </div>
               )}
               <div className="grid w-full grid-cols-2 gap-3">
@@ -80,9 +118,12 @@ export function AboutPageContent() {
                   { icon: Users,    value: stats?.followers    || "6",  label: "Followers" },
                   { icon: Calendar, value: "2023",                       label: "Joined GH" },
                   { icon: MapPin,   value: "Missouri",                   label: "Location", small: true },
-                ].map((s) => (
-                  <div
+                ].map((s, i) => (
+                  <motion.div
                     key={s.label}
+                    initial={false}
+                    animate={heroInView ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 20, scale: 0.95 }}
+                    transition={{ duration: 0.4, delay: 0.2 + i * 0.05, ease: [0.25, 0.1, 0.25, 1] }}
                     className="card-hover rounded-lg border border-border bg-card p-3 text-center cursor-default"
                   >
                     <s.icon className="mx-auto mb-1 h-4 w-4 text-primary" />
@@ -90,13 +131,18 @@ export function AboutPageContent() {
                       {s.value}
                     </div>
                     <div className="text-[10px] text-muted-foreground">{s.label}</div>
-                  </div>
+                  </motion.div>
                 ))}
               </div>
-            </div>
+            </motion.div>
 
             {/* Bio */}
-            <div className="lg:col-span-2">
+            <motion.div 
+              initial={false}
+              animate={heroInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+              transition={{ duration: 0.5, delay: 0.15, ease: [0.25, 0.1, 0.25, 1] }}
+              className="lg:col-span-2"
+            >
               <div className="card-hover rounded-xl border border-border bg-card p-6 md:p-8">
                 <div className="mb-6 flex items-center gap-2">
                   {[["bg-[#ff5f57]","border-[#e0443e]"], ["bg-[#febc2e]","border-[#d4a012]"], ["bg-[#28c840]","border-[#1aab29]"]].map(([bg, border], i) => (
@@ -111,13 +157,24 @@ export function AboutPageContent() {
                     { icon: Terminal, text: <>Security research is where I spend most of my focus right now. I like shipping open-source tools that actually help people find and patch real vulnerabilities.</> },
                     { icon: Globe, text: <>I used to run <strong className="text-foreground">Disutils Team</strong>, a Discord tooling org. These days it's all about <strong className="text-foreground">VulnRadar</strong>. If you want to build something together, hit me up.</> },
                   ].map(({ icon: Icon, text }, i) => (
-                    <p key={i} className="flex items-start gap-3">
+                    <motion.p 
+                      key={i} 
+                      initial={false}
+                      animate={heroInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
+                      transition={{ duration: 0.4, delay: 0.25 + i * 0.08, ease: [0.25, 0.1, 0.25, 1] }}
+                      className="flex items-start gap-3"
+                    >
                       <Icon className="mt-1 h-5 w-5 shrink-0 text-primary" />
                       <span>{text}</span>
-                    </p>
+                    </motion.p>
                   ))}
                 </div>
-                <div className="mt-6 flex flex-wrap gap-3">
+                <motion.div 
+                  initial={false}
+                  animate={heroInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
+                  transition={{ duration: 0.4, delay: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+                  className="mt-6 flex flex-wrap gap-3"
+                >
                   <a 
                     href="https://github.com/RejectModders" 
                     target="_blank" 
@@ -134,16 +191,21 @@ export function AboutPageContent() {
                   >
                     <ExternalLink className="h-3 w-3 text-primary" /> vulnradar.dev
                   </a>
-                </div>
+                </motion.div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
 
         {/* Skills */}
-        <div className="mb-20">
-          <SectionHeader tag="// skills" title="Tech Stack" />
-          <div className="card-hover rounded-xl border border-border bg-card p-6 md:p-8">
+        <div ref={skillsRef} className="mb-20">
+          <SectionHeader tag="// skills" title="Tech Stack" isInView={skillsInView} />
+          <motion.div 
+            initial={false}
+            animate={skillsInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+            transition={{ duration: 0.5, delay: 0.1, ease: [0.25, 0.1, 0.25, 1] }}
+            className="card-hover rounded-xl border border-border bg-card p-6 md:p-8"
+          >
             <div className="mb-6 flex items-center gap-2">
               {[["bg-[#ff5f57]","border-[#e0443e]"], ["bg-[#febc2e]","border-[#d4a012]"], ["bg-[#28c840]","border-[#1aab29]"]].map(([bg, border], i) => (
                 <div key={i} className={`h-3 w-3 rounded-full border ${bg} ${border}`} />
@@ -151,34 +213,44 @@ export function AboutPageContent() {
               <span className="ml-2 font-mono text-xs text-muted-foreground">skills.json</span>
             </div>
             <div className="grid gap-5 md:grid-cols-2">
-              {SKILLS.map((skill) => (
-                <div key={skill.name}>
+              {SKILLS.map((skill, i) => (
+                <motion.div 
+                  key={skill.name}
+                  initial={false}
+                  animate={skillsInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
+                  transition={{ duration: 0.4, delay: 0.15 + i * 0.05, ease: [0.25, 0.1, 0.25, 1] }}
+                >
                   <div className="mb-1.5 flex items-center justify-between">
                     <span className="text-sm font-medium text-foreground">{skill.name}</span>
                     <span className="font-mono text-xs text-primary">{skill.level}%</span>
                   </div>
                   <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-secondary">
-                    <div
+                    <motion.div
+                      initial={false}
+                      animate={skillsInView ? { width: `${Math.min(skill.level, 100)}%` } : { width: 0 }}
+                      transition={{ duration: 0.8, delay: 0.25 + i * 0.06, ease: [0.25, 0.1, 0.25, 1] }}
                       className="h-full rounded-full bg-primary"
                       style={{ 
-                        width: `${Math.min(skill.level, 100)}%`,
                         boxShadow: "0 0 8px color-mix(in oklch, var(--primary) 50%, transparent)" 
                       }}
                     />
                   </div>
-                </div>
+                </motion.div>
               ))}
             </div>
-          </div>
+          </motion.div>
         </div>
 
         {/* Organizations */}
-        <div className="mb-20">
-          <SectionHeader tag="// organizations" title="My Organizations" />
+        <div ref={orgsRef} className="mb-20">
+          <SectionHeader tag="// organizations" title="My Organizations" isInView={orgsInView} />
           <div className="grid gap-6 md:grid-cols-2">
-            {orgs.map((org) => (
-              <a
+            {orgs.map((org, i) => (
+              <motion.a
                 key={org.name}
+                initial={false}
+                animate={orgsInView ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 30, scale: 0.98 }}
+                transition={{ duration: 0.5, delay: 0.1 + i * 0.15, ease: [0.25, 0.1, 0.25, 1] }}
                 href={org.url} 
                 target="_blank" 
                 rel="noopener noreferrer"
@@ -194,35 +266,54 @@ export function AboutPageContent() {
                 </div>
                 <p className="mb-4 text-sm leading-relaxed text-muted-foreground">{org.description}</p>
                 <div className="flex flex-wrap gap-2">
-                  {org.highlights.map((h) => (
-                    <span key={h} className="rounded-md border border-primary/20 bg-primary/5 px-2 py-1 font-mono text-[10px] text-primary/80">
+                  {org.highlights.map((h, hi) => (
+                    <motion.span 
+                      key={h} 
+                      initial={false}
+                      animate={orgsInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.9 }}
+                      transition={{ duration: 0.3, delay: 0.3 + i * 0.15 + hi * 0.05, ease: [0.25, 0.1, 0.25, 1] }}
+                      className="rounded-md border border-primary/20 bg-primary/5 px-2 py-1 font-mono text-[10px] text-primary/80"
+                    >
                       {h}
-                    </span>
+                    </motion.span>
                   ))}
                 </div>
-              </a>
+              </motion.a>
             ))}
           </div>
         </div>
 
         {/* Timeline */}
-        <div>
-          <SectionHeader tag="// journey" title="My Timeline" />
+        <div ref={timelineRef}>
+          <SectionHeader tag="// journey" title="My Timeline" isInView={timelineInView} />
           <div className="relative">
             {/* Vertical line */}
-            <div className="absolute left-5 top-0 bottom-0 w-px bg-border md:left-1/2 md:-translate-x-px" />
+            <motion.div 
+              initial={false}
+              animate={timelineInView ? { scaleY: 1 } : { scaleY: 0 }}
+              transition={{ duration: 0.8, ease: [0.25, 0.1, 0.25, 1] }}
+              className="absolute left-5 top-0 bottom-0 w-px bg-border origin-top md:left-1/2 md:-translate-x-px" 
+            />
             {timelineItems.map((item, i) => {
               const Icon = item.icon
               const isRight = i % 2 !== 0
               return (
-                <div
+                <motion.div
                   key={item.year}
+                  initial={false}
+                  animate={timelineInView ? { opacity: 1, x: 0 } : { opacity: 0, x: isRight ? 30 : -30 }}
+                  transition={{ duration: 0.5, delay: 0.15 + i * 0.1, ease: [0.25, 0.1, 0.25, 1] }}
                   className={`relative mb-10 flex flex-col gap-2 pl-14 md:w-1/2 md:pl-0 ${isRight ? "md:ml-auto md:pl-12" : "md:pr-12 md:text-right"}`}
                 >
                   {/* Icon dot */}
-                  <div className={`absolute left-1.5 top-0.5 flex h-8 w-8 items-center justify-center rounded-full border-2 border-primary bg-background hover:bg-primary/10 ${isRight ? "md:-left-4" : "md:left-auto md:-right-4"}`}>
+                  <motion.div 
+                    initial={false}
+                    animate={timelineInView ? { scale: 1, opacity: 1 } : { scale: 0, opacity: 0 }}
+                    transition={{ duration: 0.4, delay: 0.2 + i * 0.1, ease: [0.25, 0.1, 0.25, 1] }}
+                    className={`absolute left-1.5 top-0.5 flex h-8 w-8 items-center justify-center rounded-full border-2 border-primary bg-background hover:bg-primary/10 ${isRight ? "md:-left-4" : "md:left-auto md:-right-4"}`}
+                  >
                     <Icon className="h-3.5 w-3.5 text-primary" />
-                  </div>
+                  </motion.div>
 
                   {/* Year + tag */}
                   <div className={`flex items-center gap-2 ${isRight ? "" : "md:flex-row-reverse md:justify-end"}`}>
@@ -234,7 +325,7 @@ export function AboutPageContent() {
 
                   <h3 className="text-base font-semibold text-foreground">{item.title}</h3>
                   <p className="text-sm leading-relaxed text-muted-foreground">{item.description}</p>
-                </div>
+                </motion.div>
               )
             })}
           </div>
