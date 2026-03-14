@@ -184,36 +184,26 @@ export function ProjectsPageContent() {
       <div className="mx-auto max-w-6xl px-4">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          initial={false}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
           transition={{ duration: DUR, delay: PAGE_START, ease: EASE }}
           className="mb-8"
         >
-          <motion.span 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={isInView ? { opacity: 1, scale: 1 } : {}}
-            transition={{ duration: 0.15, delay: PAGE_START, ease: EASE }}
-            className="font-mono text-sm text-primary inline-block"
-          >
+          <span className="font-mono text-sm text-primary">
             {'// projects'}
-          </motion.span>
+          </span>
           <h1 className="mt-2 text-4xl font-bold text-foreground md:text-5xl lg:text-6xl">
             All <span className="text-gradient">Projects</span>
           </h1>
-          <motion.p 
-            initial={{ opacity: 0, y: 8 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: DUR, delay: PAGE_START + 0.05, ease: EASE }}
-            className="mt-4 max-w-2xl text-lg text-muted-foreground"
-          >
+          <p className="mt-4 max-w-2xl text-lg text-muted-foreground">
             Stuff I've built across my personal account and both orgs. Security tools, Discord bots, random side projects. A bit of everything.
-          </motion.p>
+          </p>
         </motion.div>
 
         {/* Stats bar */}
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          initial={false}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
           transition={{ duration: DUR, delay: PAGE_START + PAGE_STEP, ease: EASE }}
           className="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-4"
         >
@@ -225,8 +215,8 @@ export function ProjectsPageContent() {
           ].map((stat, i) => (
             <motion.div
               key={stat.label}
-              initial={{ opacity: 0, y: 10, scale: 0.95 }}
-              animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
+              initial={false}
+              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
               transition={{ delay: PAGE_START + PAGE_STEP * 2 + i * 0.03, duration: 0.2, ease: EASE }}
               whileHover={{ scale: 1.03, transition: { duration: 0.1 } }}
               whileTap={{ scale: 0.98 }}
@@ -242,8 +232,8 @@ export function ProjectsPageContent() {
 
         {/* Filters */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          initial={false}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
           transition={{ duration: DUR, delay: PAGE_START + PAGE_STEP * 3, ease: EASE }}
           className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
         >

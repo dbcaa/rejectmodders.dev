@@ -27,7 +27,7 @@ export function Navbar() {
     <>
       {/* Header animates first - instant */}
       <motion.header
-        initial={{ y: -60, opacity: 0 }}
+        initial={false}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
         className={`fixed inset-x-0 top-0 z-40 transition-all duration-150 ${
