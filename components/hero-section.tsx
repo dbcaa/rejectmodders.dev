@@ -33,7 +33,13 @@ const AnimatedText = ({ text, className }: { text: string; className?: string })
 export function HeroSection() {
   const ref = useRef<HTMLElement>(null)
   const [mounted, setMounted] = useState(false)
-  const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"], layoutEffect: false })
+  
+  // Only initialize useScroll after mount to prevent hydration/container warnings
+  const { scrollYProgress } = useScroll({ 
+    target: mounted ? ref : undefined, 
+    offset: ["start start", "end start"], 
+    layoutEffect: false 
+  })
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "30%"])
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0])
 
