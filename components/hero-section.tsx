@@ -34,18 +34,14 @@ export function HeroSection() {
   const ref = useRef<HTMLElement>(null)
   const [mounted, setMounted] = useState(false)
   
-  // Only initialize useScroll after mount to prevent hydration/container warnings
-  const { scrollYProgress } = useScroll({ 
-    target: mounted ? ref : undefined, 
-    offset: ["start start", "end start"], 
-    layoutEffect: false 
-  })
-  const y = useTransform(scrollYProgress, [0, 1], ["0%", "30%"])
-  const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0])
-
   useEffect(() => {
     setMounted(true)
   }, [])
+
+  // Use window scroll without target to avoid container position warnings
+  const { scrollYProgress } = useScroll()
+  const y = useTransform(scrollYProgress, [0, 0.3], ["0%", "30%"])
+  const opacity = useTransform(scrollYProgress, [0, 0.25], [1, 0])
 
   return (
     <section ref={ref} className="relative flex min-h-screen items-center justify-center px-4" style={{ overflow: "clip" }}>
