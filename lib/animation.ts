@@ -1,43 +1,39 @@
 /**
- * Global animation constants and reusable variants — single source of truth.
- * Import from '@/lib/animation' for consistent motion across the site.
- * 
- * Animation choreography:
- * - Navbar: 0ms → 300ms (loads first, remains static)
- * - Content: 400ms+ (starts after navbar completes)
+ * Global animation constants — INSTANT animations, no delays.
+ * Everything appears immediately with minimal transition time.
  */
 
 // ── Timing Constants ─────────────────────────────────────────────────────────
-/** Standard easing curve (snappy ease-out) */
-export const EASE = [0.16, 1, 0.3, 1] as const
+/** Standard easing - instant snap */
+export const EASE = [0, 0, 0.2, 1] as const
 
 /** Snappy ease for micro-interactions */
-export const EASE_SNAPPY = [0.23, 1, 0.32, 1] as const
+export const EASE_SNAPPY = [0, 0, 0.1, 1] as const
 
 /** Smooth ease for larger movements */
-export const EASE_SMOOTH = [0.25, 0.1, 0.25, 1] as const
+export const EASE_SMOOTH = [0, 0, 0.2, 1] as const
 
 /** Bounce ease for playful elements */
-export const EASE_BOUNCE = [0.34, 1.4, 0.64, 1] as const
+export const EASE_BOUNCE = [0.2, 1.1, 0.4, 1] as const
 
-/** Base duration - fast and snappy */
-export const DUR = 0.25
+/** Base duration - instant */
+export const DUR = 0.1
 
-/** Fast duration for micro-interactions */
-export const DUR_FAST = 0.12
+/** Fast duration - instant */
+export const DUR_FAST = 0.05
 
-/** Slow duration for dramatic entrances */
-export const DUR_SLOW = 0.35
+/** Slow duration - still fast */
+export const DUR_SLOW = 0.15
 
 /** Navbar animation duration */
-export const NAV_DUR = 0.25
+export const NAV_DUR = 0.1
 
-/** Page-load sequence: navbar finishes ~0.25s, content starts at 0.15s */
-export const PAGE_START = 0.15
-export const PAGE_STEP = 0.04
+/** Page-load sequence: everything starts immediately */
+export const PAGE_START = 0
+export const PAGE_STEP = 0
 
-/** Scroll-triggered stagger - faster */
-export const SCROLL_STEP = 0.03
+/** Scroll-triggered stagger - instant */
+export const SCROLL_STEP = 0
 
 // ── Reusable Variants ────────────────────────────────────────────────────────
 /** Fade up animation - most common pattern */
@@ -169,28 +165,24 @@ export const fastStaggerContainer = {
 }
 
 // ── Hover & Gesture Variants ─────────────────────────────────────────────────
-/** Card hover effect - instant response */
+/** Card hover effect - INSTANT */
 export const cardHover = {
-  rest: { scale: 1, y: 0 },
-  hover: { 
-    scale: 1.02, 
-    y: -3,
-    transition: { duration: 0.1, ease: EASE_SNAPPY }
-  },
-  tap: { scale: 0.98, transition: { duration: 0.08 } },
+  rest: { scale: 1, y: 0, transition: { duration: 0 } },
+  hover: { scale: 1.01, y: -2, transition: { duration: 0 } },
+  tap: { scale: 0.99, transition: { duration: 0 } },
 }
 
-/** Button hover effect - instant */
+/** Button hover effect - INSTANT */
 export const buttonHover = {
-  rest: { scale: 1 },
-  hover: { scale: 1.02, transition: { duration: 0.08 } },
-  tap: { scale: 0.97, transition: { duration: 0.06 } },
+  rest: { scale: 1, transition: { duration: 0 } },
+  hover: { scale: 1.01, transition: { duration: 0 } },
+  tap: { scale: 0.98, transition: { duration: 0 } },
 }
 
-/** Subtle lift effect - immediate */
+/** Subtle lift effect - INSTANT */
 export const subtleLift = {
-  rest: { y: 0 },
-  hover: { y: -2, transition: { duration: 0.1, ease: EASE_SNAPPY } },
+  rest: { y: 0, transition: { duration: 0 } },
+  hover: { y: -2, transition: { duration: 0 } },
 }
 
 // ── Utility Functions ────────────────────────────────────────────────────────

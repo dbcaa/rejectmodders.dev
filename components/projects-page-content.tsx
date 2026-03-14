@@ -1,9 +1,8 @@
 "use client"
 
-import { motion, useInView, AnimatePresence } from "framer-motion"
+import { useInView } from "framer-motion"
 import { useRef, useEffect, useState, useMemo } from "react"
-import { Star, GitFork, ExternalLink, Code2, Search, Filter, ArrowUpRight, Archive } from "lucide-react"
-import { EASE, EASE_BOUNCE, EASE_SMOOTH, DUR, DUR_SLOW, PAGE_START, PAGE_STEP, SCROLL_STEP } from "@/lib/animation"
+import { Star, GitFork, ExternalLink, Code2, Search, Filter, Archive, ArrowUpRight } from "lucide-react"
 
 // Easing function for counters
 function easeOut(t: number) {
@@ -183,70 +182,40 @@ export function ProjectsPageContent() {
     <div ref={ref} className="relative pt-24 pb-16 md:pt-32 md:pb-24" style={{ overflow: "clip" }}>
       <div className="mx-auto max-w-6xl px-4">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: DUR, delay: PAGE_START, ease: EASE }}
-          className="mb-8"
-        >
-          <motion.span 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={isInView ? { opacity: 1, scale: 1 } : {}}
-            transition={{ duration: 0.15, delay: PAGE_START, ease: EASE }}
-            className="font-mono text-sm text-primary inline-block"
-          >
+        <div className="mb-8">
+          <span className="font-mono text-sm text-primary">
             {'// projects'}
-          </motion.span>
+          </span>
           <h1 className="mt-2 text-4xl font-bold text-foreground md:text-5xl lg:text-6xl">
             All <span className="text-gradient">Projects</span>
           </h1>
-          <motion.p 
-            initial={{ opacity: 0, y: 8 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: DUR, delay: PAGE_START + 0.05, ease: EASE }}
-            className="mt-4 max-w-2xl text-lg text-muted-foreground"
-          >
+          <p className="mt-4 max-w-2xl text-lg text-muted-foreground">
             Stuff I've built across my personal account and both orgs. Security tools, Discord bots, random side projects. A bit of everything.
-          </motion.p>
-        </motion.div>
+          </p>
+        </div>
 
         {/* Stats bar */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: DUR, delay: PAGE_START + PAGE_STEP, ease: EASE }}
-          className="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-4"
-        >
+        <div className="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {[
             { label: "Repositories", value: stats.totalRepos },
             { label: "Total Stars", value: stats.totalStars },
             { label: "Total Forks", value: stats.totalForks },
             { label: "Languages", value: stats.languages },
-          ].map((stat, i) => (
-            <motion.div
+          ].map((stat) => (
+            <div
               key={stat.label}
-              initial={{ opacity: 0, y: 10, scale: 0.95 }}
-              animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
-              transition={{ delay: PAGE_START + PAGE_STEP * 2 + i * 0.03, duration: 0.2, ease: EASE }}
-              whileHover={{ scale: 1.03, transition: { duration: 0.1 } }}
-              whileTap={{ scale: 0.98 }}
               className="card-hover rounded-lg border border-border bg-card p-4 text-center cursor-default"
             >
               <div className="font-mono text-2xl font-bold text-primary">
                 <ProjectAnimatedNumber value={stat.value} isInView={isInView} startSignal={statsSignal} />
               </div>
               <div className="mt-1 text-xs text-muted-foreground">{stat.label}</div>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
 
         {/* Filters */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: DUR, delay: PAGE_START + PAGE_STEP * 3, ease: EASE }}
-          className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
-        >
+        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           {/* Source filter */}
           <div className="flex flex-wrap gap-2">
             {sources.map((source) => (
@@ -289,16 +258,11 @@ export function ProjectsPageContent() {
               />
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Language chips */}
         {languages.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={isInView ? { opacity: 1 } : {}}
-            transition={{ delay: PAGE_START + PAGE_STEP * 4, ease: EASE }}
-            className="mb-6 flex flex-wrap gap-2"
-          >
+          <div className="mb-6 flex flex-wrap gap-2">
             <span className="flex items-center gap-1 text-xs text-muted-foreground">
               <Filter className="h-3 w-3" /> Languages:
             </span>
@@ -314,7 +278,7 @@ export function ProjectsPageContent() {
                 {lang}
               </span>
             ))}
-          </motion.div>
+          </div>
         )}
 
         {/* Projects grid */}
@@ -333,26 +297,13 @@ export function ProjectsPageContent() {
             ))}
           </div>
         ) : (
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={`${filter}-${searchQuery}-${showArchived}`}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.15 }}
-              className="grid gap-4 md:grid-cols-2 lg:grid-cols-3"
-            >
-              {filteredRepos.map((repo, i) => (
-                <motion.a
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {filteredRepos.map((repo) => (
+                <a
                   key={repo.id}
                   href={repo.html_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.2, delay: Math.min(i * 0.02, 0.2), ease: EASE }}
-                  whileHover={{ y: -3, scale: 1.01, transition: { duration: 0.1 } }}
-                  whileTap={{ scale: 0.99 }}
                   className="card-hover group relative flex flex-col rounded-xl border border-border bg-card p-6"
                 >
                   {/* Archived badge */}
@@ -428,30 +379,20 @@ export function ProjectsPageContent() {
                       </span>
                     </div>
                   )}
-                </motion.a>
+                </a>
               ))}
-            </motion.div>
-          </AnimatePresence>
+          </div>
         )}
 
         {!loading && filteredRepos.length === 0 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="py-16 text-center"
-          >
+          <div className="py-16 text-center">
             <Code2 className="mx-auto mb-4 h-12 w-12 text-muted-foreground/30" />
             <p className="font-mono text-sm text-muted-foreground">No repositories found matching your filters.</p>
-          </motion.div>
+          </div>
         )}
 
         {/* View on GitHub */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={isInView ? { opacity: 1 } : {}}
-          transition={{ duration: DUR, delay: PAGE_START + PAGE_STEP * 5, ease: EASE }}
-          className="mt-12 flex flex-wrap justify-center gap-4"
-        >
+        <div className="mt-12 flex flex-wrap justify-center gap-4">
           {[
             { label: "RejectModders", url: "https://github.com/RejectModders" },
             { label: "Disutils Team", url: "https://github.com/disutils" },
@@ -462,13 +403,13 @@ export function ProjectsPageContent() {
               href={org.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-5 py-2.5 font-mono text-sm text-muted-foreground transition-all hover:border-primary/30 hover:text-primary"
+              className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-5 py-2.5 font-mono text-sm text-muted-foreground hover:border-primary/30 hover:text-primary"
             >
               {org.label} on GitHub
               <ExternalLink className="h-3.5 w-3.5" />
             </a>
           ))}
-        </motion.div>
+        </div>
       </div>
     </div>
   )

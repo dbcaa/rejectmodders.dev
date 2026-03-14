@@ -188,21 +188,17 @@
   width: 0;
   height: 2px;
   background: var(--primary);
-  transition: width 0.3s ease;
 }
 .animated-underline:hover::after {
   width: 100%;
 }
 
-/* ── Consistent card hover — primary border glow on ALL cards ── */
-.card-hover {
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
-}
+/* ── Consistent card hover — INSTANT ── */
 .card-hover:hover {
   border-color: color-mix(in oklch, var(--primary) 45%, transparent);
   box-shadow: 0 0 0 1px color-mix(in oklch, var(--primary) 12%, transparent),
-              0 8px 32px color-mix(in oklch, var(--primary) 8%, transparent);
-  transform: translateY(-3px);
+              0 6px 24px color-mix(in oklch, var(--primary) 6%, transparent);
+  transform: translateY(-2px);
 }
 
 /* Floating animation */
@@ -307,12 +303,11 @@
   text-wrap: pretty;
 }
 
-/* Better link styling */
+/* Better link styling - INSTANT */
 .prose-link {
   color: var(--primary);
   text-decoration: underline;
   text-underline-offset: 3px;
-  transition: color 0.2s ease, text-decoration-color 0.2s ease;
 }
 .prose-link:hover {
   color: color-mix(in oklch, var(--primary) 80%, white);
@@ -360,10 +355,18 @@
 }
 
 /* Focus visible improvements */
-:focus-visible {
+:focus-visible:not(.terminal-input) {
   outline: 2px solid var(--primary);
   outline-offset: 2px;
   border-radius: 4px;
+}
+
+/* Terminal input - no focus outline */
+.terminal-input:focus,
+.terminal-input:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+  border: none !important;
 }
 
 /* Better selection color */

@@ -585,7 +585,7 @@ export function TerminalEasterEgg() {
                     value={input}
                     onChange={e => setInput(e.target.value)}
                     onKeyDown={handleKeyDown}
-                    className="flex-1 bg-transparent outline-none text-foreground caret-primary"
+                    className="terminal-input flex-1 bg-transparent text-foreground caret-primary"
                     autoComplete="off"
                     autoCapitalize="off"
                     autoCorrect="off"

@@ -25,12 +25,9 @@ export function Navbar() {
 
   return (
     <>
-      {/* Header animates first - instant */}
-      <motion.header
-        initial={{ y: -60, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-        className={`fixed inset-x-0 top-0 z-40 transition-all duration-150 ${
+      {/* Header - static, no animation */}
+      <header
+        className={`fixed inset-x-0 top-0 z-40 ${
           scrolled
             ? "border-b border-border bg-background/80 backdrop-blur-xl"
             : "bg-transparent"
@@ -100,7 +97,7 @@ export function Navbar() {
             {mobileOpen ? <X className="h-5 w-5" aria-hidden="true" /> : <Menu className="h-5 w-5" aria-hidden="true" />}
           </button>
         </nav>
-      </motion.header>
+      </header>
 
       {/* Mobile menu */}
       <AnimatePresence>

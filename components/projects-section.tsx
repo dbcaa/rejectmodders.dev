@@ -1,10 +1,9 @@
 "use client"
 
-import { motion, useInView } from "framer-motion"
 import { useRef, useEffect, useState } from "react"
+import { motion, useInView } from "framer-motion"
 import { Star, GitFork, ArrowUpRight, ArrowRight } from "lucide-react"
 import Link from "next/link"
-import { EASE, DUR, SCROLL_STEP } from "@/lib/animation"
 
 interface Repo {
   id: number
@@ -36,8 +35,8 @@ const languageColors: Record<string, string> = {
 }
 
 export function ProjectsSection() {
-  const ref = useRef<HTMLElement>(null)
-  const isInView = useInView(ref, { once: true })
+  const ref = useRef(null)
+  const isInView = useInView(ref, { once: true, margin: "-100px" })
   const [repos, setRepos] = useState<Repo[]>([])
 
   useEffect(() => {
@@ -66,38 +65,37 @@ export function ProjectsSection() {
       <div className="mx-auto max-w-6xl px-4">
         {/* Section header */}
         <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: DUR, ease: EASE }}
+          initial={false}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
+          transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
           className="mb-12"
         >
           <motion.span
-            initial={{ opacity: 0 }}
-            animate={isInView ? { opacity: 1 } : {}}
-            transition={{ duration: DUR, delay: 0.05, ease: EASE }}
+            initial={false}
+            animate={isInView ? { opacity: 1 } : { opacity: 0 }}
+            transition={{ duration: 0.3 }}
             className="font-mono text-sm text-primary"
           >
             {'// projects'}
           </motion.span>
           <motion.h2
-            initial={{ opacity: 0, y: 8 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: DUR, delay: 0.1, ease: EASE }}
+            initial={false}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }}
+            transition={{ duration: 0.4, delay: 0.05, ease: [0.25, 0.1, 0.25, 1] }}
             className="mt-2 text-3xl font-bold text-foreground md:text-4xl"
           >
             Featured Projects
           </motion.h2>
           <motion.div
-            initial={{ scaleX: 0 }}
-            animate={isInView ? { scaleX: 1 } : {}}
-            transition={{ duration: 0.25, delay: 0.15, ease: "easeOut" }}
-            style={{ originX: 0 }}
-            className="mt-2 h-1 w-16 rounded-full bg-primary"
+            initial={false}
+            animate={isInView ? { scaleX: 1 } : { scaleX: 0 }}
+            transition={{ duration: 0.4, delay: 0.1, ease: [0.25, 0.1, 0.25, 1] }}
+            className="mt-2 h-1 w-16 origin-left rounded-full bg-primary"
           />
           <motion.p
-            initial={{ opacity: 0, y: 6 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: DUR, delay: 0.2, ease: EASE }}
+            initial={false}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
+            transition={{ duration: 0.4, delay: 0.1, ease: [0.25, 0.1, 0.25, 1] }}
             className="mt-4 max-w-lg text-muted-foreground"
           >
             Open source projects from my personal account and organizations, fetched live from GitHub.
@@ -109,13 +107,12 @@ export function ProjectsSection() {
           {repos.map((repo, i) => (
             <motion.a
               key={repo.id}
+              initial={false}
+              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
+              transition={{ duration: 0.4, delay: 0.15 + i * 0.05, ease: [0.25, 0.1, 0.25, 1] }}
               href={repo.html_url}
               target="_blank"
               rel="noopener noreferrer"
-              initial={{ opacity: 0, y: 12 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: DUR, delay: 0.1 + i * SCROLL_STEP, ease: EASE }}
-              whileTap={{ scale: 0.98 }}
               className="card-hover group relative flex flex-col rounded-xl border border-border bg-card p-5"
             >
               {/* Owner + name */}
@@ -129,11 +126,11 @@ export function ProjectsSection() {
                   <span className="block font-mono text-[10px] text-muted-foreground/70">
                     {repo.owner.login}
                   </span>
-                  <h3 className="truncate font-mono text-sm font-semibold text-foreground transition-colors group-hover:text-primary">
+                  <h3 className="truncate font-mono text-sm font-semibold text-foreground group-hover:text-primary">
                     {repo.name}
                   </h3>
                 </div>
-                <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground opacity-0 transition-all group-hover:opacity-100" />
+                <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground opacity-0 group-hover:opacity-100" />
               </div>
 
               {/* Description */}
@@ -170,20 +167,20 @@ export function ProjectsSection() {
         </div>
 
         {/* View all link */}
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: DUR, delay: 0.4, ease: EASE }}
-            className="mt-10 text-center"
+        <motion.div
+          initial={false}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }}
+          transition={{ duration: 0.4, delay: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
+          className="mt-10 text-center"
+        >
+          <Link
+            href="/projects"
+            className="group inline-flex items-center gap-2 rounded-lg border border-primary/30 bg-primary/5 px-6 py-3 font-mono text-sm text-primary hover:bg-primary/10"
           >
-            <Link
-              href="/projects"
-              className="group inline-flex items-center gap-2 rounded-lg border border-primary/30 bg-primary/5 px-6 py-3 font-mono text-sm text-primary transition-all duration-150 hover:-translate-y-0.5 hover:bg-primary/10 hover:shadow-[0_0_20px_color-mix(in_oklch,var(--primary)_15%,transparent)]"
-            >
-              View all projects
-              <ArrowRight className="h-4 w-4 transition-transform duration-150 group-hover:translate-x-1" />
-            </Link>
-          </motion.div>
+            View all projects
+            <ArrowRight className="h-4 w-4 group-hover:translate-x-1" />
+          </Link>
+        </motion.div>
       </div>
     </section>
   )

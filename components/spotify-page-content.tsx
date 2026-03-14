@@ -1,13 +1,11 @@
 "use client"
 
-import { motion, useInView } from "framer-motion"
-import { useRef, useState, useEffect } from "react"
+import { motion } from "framer-motion"
+import { useState, useEffect } from "react"
 import { Music2, Headphones, Radio, ExternalLink, Disc3 } from "lucide-react"
-import { EASE, DUR, PAGE_START, PAGE_STEP } from "@/lib/animation"
 
 const SPOTIFY_UID = "31tfph3mamrlj4uch76albbptgay"
 
-// Equalizer bars
 function EqualizerBars({ playing = true }: { playing?: boolean }) {
   const bars = [0.6, 1, 0.75, 0.9, 0.5, 0.8, 0.65]
   return (
@@ -25,7 +23,6 @@ function EqualizerBars({ playing = true }: { playing?: boolean }) {
   )
 }
 
-// Floating note
 function FloatingNote({ delay, x, icon }: { delay: number; x: string; icon: string }) {
   return (
     <motion.div
@@ -40,7 +37,6 @@ function FloatingNote({ delay, x, icon }: { delay: number; x: string; icon: stri
   )
 }
 
-// Skeleton shimmer - shown while the external image is loading
 function SpotifyCardSkeleton({ rows = 1 }: { rows?: number }) {
   return (
     <div className="space-y-3 p-4">
@@ -57,30 +53,17 @@ function SpotifyCardSkeleton({ rows = 1 }: { rows?: number }) {
   )
 }
 
-// Image that fades in only after it has fully loaded
 function SpotifyImage({ src, alt, skeletonRows }: { src: string; alt: string; skeletonRows: number }) {
   const [loaded, setLoaded] = useState(false)
 
   return (
     <div className="relative">
-      {/* Skeleton shown until image loads */}
-      <motion.div
-        animate={{ opacity: loaded ? 0 : 1 }}
-        transition={{ duration: 0.3 }}
-        className={loaded ? "pointer-events-none absolute inset-0" : undefined}
-      >
-        <SpotifyCardSkeleton rows={skeletonRows} />
-      </motion.div>
-
-      {/* Actual image - fades in once loaded */}
-      <motion.img
+      {!loaded && <SpotifyCardSkeleton rows={skeletonRows} />}
+      <img
         src={src}
         alt={alt}
         onLoad={() => setLoaded(true)}
-  initial={{ opacity: 0 }}
-  animate={{ opacity: loaded ? 1 : 0 }}
-  transition={{ duration: 0.2, ease: EASE }}
-        className="h-auto w-full rounded-xl"
+        className={`h-auto w-full rounded-xl ${loaded ? "opacity-100" : "opacity-0"}`}
         style={{ display: "block" }}
       />
     </div>
@@ -88,21 +71,11 @@ function SpotifyImage({ src, alt, skeletonRows }: { src: string; alt: string; sk
 }
 
 export function SpotifyPageContent() {
-  const ref = useRef<HTMLDivElement>(null)
-  const nowPlayingRef = useRef<HTMLDivElement>(null)
-  const recentRef = useRef<HTMLDivElement>(null)
-
-  const isInView = useInView(ref, { once: true })
-  const nowPlayingInView = useInView(nowPlayingRef, { once: true })
-  const recentInView = useInView(recentRef, { once: true })
-
-  // Fresh timestamp on mount ensures Spotify images bypass any CDN/browser cache
   const [timestamp, setTimestamp] = useState<number>(0)
   useEffect(() => { setTimestamp(Date.now()) }, [])
 
   return (
-    <div ref={ref} className="relative pt-24 pb-16 md:pt-32 md:pb-24" style={{ overflow: "clip" }}>
-
+    <div className="relative pt-24 pb-16 md:pt-32 md:pb-24" style={{ overflow: "clip" }}>
       {/* Ambient orb */}
       <div
         className="pointer-events-none absolute left-1/2 top-1/3 -z-10 h-150 w-150 -translate-x-1/2 -translate-y-1/2 rounded-full"
@@ -117,166 +90,93 @@ export function SpotifyPageContent() {
       <FloatingNote delay={1.8} x="50%" icon="♬" />
 
       <div className="mx-auto max-w-4xl px-4">
-
-        {/* ── Header ───────────────────────────────────────────────────── */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: DUR, delay: PAGE_START, ease: EASE }}
-          className="mb-16 text-center"
-        >
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: DUR, delay: PAGE_START, ease: EASE }}
-            className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#1DB954]/30 bg-[#1DB954]/5 px-4 py-1.5"
-          >
+        {/* Header */}
+        <div className="mb-16 text-center">
+          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#1DB954]/30 bg-[#1DB954]/5 px-4 py-1.5">
             <motion.div animate={{ rotate: 360 }} transition={{ duration: 3, repeat: Infinity, ease: "linear" }}>
               <Disc3 className="h-4 w-4 text-[#1DB954]" />
             </motion.div>
             <span className="font-mono text-xs text-[#1DB954]">Spotify Connected</span>
-          </motion.div>
+          </div>
 
-          <motion.span
-            initial={{ opacity: 0, y: 10 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: DUR, delay: PAGE_START + PAGE_STEP, ease: EASE }}
-            className="block font-mono text-sm text-primary"
-          >{'// music'}</motion.span>
-
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: DUR, delay: PAGE_START + PAGE_STEP * 2, ease: EASE }}
-            className="mt-2 text-4xl font-bold text-foreground md:text-5xl lg:text-6xl"
-          >
+          <span className="block font-mono text-sm text-primary">{'// music'}</span>
+          <h1 className="mt-2 text-4xl font-bold text-foreground md:text-5xl lg:text-6xl">
             What I&apos;m <span className="text-gradient">Listening To</span>
-          </motion.h1>
-
-          <motion.div
-            initial={{ scaleX: 0 }}
-            animate={isInView ? { scaleX: 1 } : {}}
-            transition={{ duration: DUR, delay: PAGE_START + PAGE_STEP * 3, ease: "easeOut" }}
-            style={{ originX: 0.5 }}
-            className="mx-auto mt-3 h-1 w-20 rounded-full bg-[#1DB954]"
-          />
-
-          <motion.p
-            initial={{ opacity: 0, y: 10 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: DUR, delay: PAGE_START + PAGE_STEP * 4, ease: EASE }}
-            className="mt-4 text-lg text-muted-foreground"
-          >
+          </h1>
+          <div className="mx-auto mt-3 h-1 w-20 rounded-full bg-[#1DB954]" />
+          <p className="mt-4 text-lg text-muted-foreground">
             Whatever I've been playing recently. Taste varies a lot, fair warning.
-          </motion.p>
-        </motion.div>
+          </p>
+        </div>
 
         <div className="flex flex-col items-center gap-12">
+          {/* Now Playing */}
+          <div className="w-full max-w-lg">
+            <div className="mb-4 flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                <EqualizerBars playing />
+                <span className="font-mono text-sm font-semibold text-[#1DB954]">Now Playing</span>
+              </div>
+              <div className="h-px flex-1 bg-[#1DB954]/20" />
+              <Music2 className="h-4 w-4 text-[#1DB954]/60" />
+            </div>
 
-          {/* ── Now Playing ──────────────────────────────────────────────── */}
-          <div ref={nowPlayingRef} className="w-full max-w-lg">
-            <motion.div
-  initial={{ opacity: 0, y: 16 }}
-  animate={nowPlayingInView ? { opacity: 1, y: 0 } : {}}
-  transition={{ duration: 0.2, ease: EASE }}
-  >
-  {/* Label */}
-  <motion.div
-  initial={{ opacity: 0, x: -10 }}
-  animate={nowPlayingInView ? { opacity: 1, x: 0 } : {}}
-  transition={{ duration: 0.2, delay: 0.03, ease: EASE }}
-                className="mb-4 flex items-center gap-3"
+            <div className="card-hover relative overflow-hidden rounded-2xl border border-[#1DB954]/20 bg-card">
+              <div className="pointer-events-none absolute inset-0 opacity-[0.04]"
+                style={{ background: "radial-gradient(ellipse at 50% 0%, #1DB954, transparent 60%)" }} />
+
+              <a
+                href={`https://spotify-github-profile.kittinanx.com/api/view?uid=${SPOTIFY_UID}&redirect=true`}
+                target="_blank" rel="noopener noreferrer"
+                className="relative block p-1"
               >
-                <div className="flex items-center gap-2">
-                  <EqualizerBars playing />
-                  <span className="font-mono text-sm font-semibold text-[#1DB954]">Now Playing</span>
-                </div>
-                <div className="h-px flex-1 bg-[#1DB954]/20" />
-                <Music2 className="h-4 w-4 text-[#1DB954]/60" />
-              </motion.div>
+                <SpotifyImage
+                  src={`/api/avatar?url=${encodeURIComponent(`https://spotify-github-profile.kittinanx.com/api/view?uid=${SPOTIFY_UID}&cover_image=true&theme=default&show_offline=true&background_color=0d0d0d&interchange=true&bar_color=1DB954&t=${timestamp}`)}`}
+                  alt="Spotify Now Playing"
+                  skeletonRows={1}
+                />
+              </a>
 
-              {/* Card - image fades in after it loads */}
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={nowPlayingInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.2, delay: 0.05, ease: EASE }}
-                className="relative overflow-hidden rounded-2xl border border-[#1DB954]/20 bg-card transition-all duration-200 hover:border-[#1DB954]/40 hover:shadow-[0_0_20px_rgba(29,185,84,0.08)]"
-              >
-                <div className="pointer-events-none absolute inset-0 opacity-[0.04]"
-                  style={{ background: "radial-gradient(ellipse at 50% 0%, #1DB954, transparent 60%)" }} />
-
-                <a
-                  href={`https://spotify-github-profile.kittinanx.com/api/view?uid=${SPOTIFY_UID}&redirect=true`}
-                  target="_blank" rel="noopener noreferrer"
-                  className="relative block p-1"
-                >
-                  <SpotifyImage
-                    src={`/api/avatar?url=${encodeURIComponent(`https://spotify-github-profile.kittinanx.com/api/view?uid=${SPOTIFY_UID}&cover_image=true&theme=default&show_offline=true&background_color=0d0d0d&interchange=true&bar_color=1DB954&t=${timestamp}`)}`}
-                    alt="Spotify Now Playing"
-                    skeletonRows={1}
-                  />
+              <div className="border-t border-[#1DB954]/10 px-4 py-3">
+                <a href={`https://open.spotify.com/user/${SPOTIFY_UID}`} target="_blank" rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 font-mono text-xs text-muted-foreground hover:text-[#1DB954]">
+                  <ExternalLink className="h-3 w-3" /> Open Spotify Profile
                 </a>
-
-                <div className="border-t border-[#1DB954]/10 px-4 py-3">
-                  <a href={`https://open.spotify.com/user/${SPOTIFY_UID}`} target="_blank" rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 font-mono text-xs text-muted-foreground transition-colors hover:text-[#1DB954]">
-                    <ExternalLink className="h-3 w-3" /> Open Spotify Profile
-                  </a>
-                </div>
-              </motion.div>
-            </motion.div>
+              </div>
+            </div>
           </div>
 
-          {/* ── Recently Played ───────────────────────────────────────────── */}
-          <div ref={recentRef} className="w-full max-w-lg">
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={recentInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.2, ease: EASE }}
-            >
-              {/* Label */}
-              <motion.div
-                initial={{ opacity: 0, x: -10 }}
-                animate={recentInView ? { opacity: 1, x: 0 } : {}}
-                transition={{ duration: 0.2, delay: 0.03, ease: EASE }}
-                className="mb-4 flex items-center gap-3"
-              >
-                <div className="flex items-center gap-2">
-                  <Headphones className="h-4 w-4 text-[#1DB954]" />
-                  <span className="font-mono text-sm font-semibold text-[#1DB954]">Recently Played</span>
-                </div>
-                <div className="h-px flex-1 bg-[#1DB954]/20" />
-                <Radio className="h-4 w-4 text-[#1DB954]/60" />
-              </motion.div>
+          {/* Recently Played */}
+          <div className="w-full max-w-lg">
+            <div className="mb-4 flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                <Headphones className="h-4 w-4 text-[#1DB954]" />
+                <span className="font-mono text-sm font-semibold text-[#1DB954]">Recently Played</span>
+              </div>
+              <div className="h-px flex-1 bg-[#1DB954]/20" />
+              <Radio className="h-4 w-4 text-[#1DB954]/60" />
+            </div>
 
-              {/* Card */}
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={recentInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: 0.2, delay: 0.05, ease: EASE }}
-                className="relative overflow-hidden rounded-2xl border border-[#1DB954]/20 bg-card transition-all duration-200 hover:border-[#1DB954]/40 hover:shadow-[0_0_20px_rgba(29,185,84,0.08)]"
-              >
-                <div className="pointer-events-none absolute inset-0 opacity-[0.03]"
-                  style={{ background: "radial-gradient(ellipse at 50% 0%, #1DB954, transparent 60%)" }} />
+            <div className="card-hover relative overflow-hidden rounded-2xl border border-[#1DB954]/20 bg-card">
+              <div className="pointer-events-none absolute inset-0 opacity-[0.03]"
+                style={{ background: "radial-gradient(ellipse at 50% 0%, #1DB954, transparent 60%)" }} />
 
-                <div className="relative p-1">
-                  <SpotifyImage
-                    src={`/api/avatar?url=${encodeURIComponent(`https://spotify-recently-played-readme.vercel.app/api?user=${SPOTIFY_UID}&count=5&unique=true&width=500&t=${timestamp}`)}`}
-                    alt="Recently Played on Spotify"
-                    skeletonRows={5}
-                  />
-                </div>
+              <div className="relative p-1">
+                <SpotifyImage
+                  src={`/api/avatar?url=${encodeURIComponent(`https://spotify-recently-played-readme.vercel.app/api?user=${SPOTIFY_UID}&count=5&unique=true&width=500&t=${timestamp}`)}`}
+                  alt="Recently Played on Spotify"
+                  skeletonRows={5}
+                />
+              </div>
 
-                <div className="border-t border-[#1DB954]/10 px-4 py-3">
-                  <a href={`https://open.spotify.com/user/${SPOTIFY_UID}`} target="_blank" rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 font-mono text-xs text-muted-foreground transition-colors hover:text-[#1DB954]">
-                    <ExternalLink className="h-3 w-3" /> View Full History
-                  </a>
-                </div>
-              </motion.div>
-            </motion.div>
+              <div className="border-t border-[#1DB954]/10 px-4 py-3">
+                <a href={`https://open.spotify.com/user/${SPOTIFY_UID}`} target="_blank" rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 font-mono text-xs text-muted-foreground hover:text-[#1DB954]">
+                  <ExternalLink className="h-3 w-3" /> View Full History
+                </a>
+              </div>
+            </div>
           </div>
-
         </div>
       </div>
     </div>

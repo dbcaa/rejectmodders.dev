@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter, JetBrains_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import { CustomCursor } from '@/components/custom-cursor'
 import { PageTransition } from '@/components/page-transition'
 import { ScrollToTop } from '@/components/scroll-to-top'
@@ -80,7 +81,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`} suppressHydrationWarning data-scroll-behavior="smooth">
       <head>
         <link rel="manifest" href="/manifest.json" />
       </head>
@@ -103,6 +104,7 @@ export default function RootLayout({
             {children}
           </PageTransition>
           <Analytics />
+          <SpeedInsights />
         </ThemeProvider>
       </body>
     </html>
