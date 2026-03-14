@@ -3,7 +3,7 @@
 import { motion, useInView } from "framer-motion"
 import { useRef, useState, useEffect } from "react"
 import { Music2, Headphones, Radio, ExternalLink, Disc3, Play, Pause, Clock, Volume2, Heart, SkipForward, Shuffle, Repeat } from "lucide-react"
-import { EASE, DUR, PAGE_START, PAGE_STEP, SCROLL_STEP } from "@/lib/animation"
+import { EASE, EASE_BOUNCE, EASE_SMOOTH, DUR, DUR_SLOW, PAGE_START, PAGE_STEP, SCROLL_STEP } from "@/lib/animation"
 
 const SPOTIFY_UID = "31tfph3mamrlj4uch76albbptgay"
 
@@ -207,9 +207,10 @@ function NowPlayingCard({ isInView }: { isInView: boolean }) {
 function TrackCard({ track, index, isInView }: { track: { title: string; artist: string; duration: string; album: string }; index: number; isInView: boolean }) {
   return (
     <motion.div
-      initial={{ opacity: 0, x: -20 }}
-      animate={isInView ? { opacity: 1, x: 0 } : {}}
+      initial={{ opacity: 0, x: -24, scale: 0.97 }}
+      animate={isInView ? { opacity: 1, x: 0, scale: 1 } : {}}
       transition={{ duration: 0.4, delay: 0.1 + index * SCROLL_STEP, ease: EASE }}
+      whileHover={{ x: 4, scale: 1.01, transition: { duration: 0.15 } }}
       className="group flex items-center gap-4 p-4 rounded-xl border border-border/50 bg-card/50 hover:border-[#1DB954]/30 hover:bg-card transition-all duration-200"
     >
       {/* Track number / Album art */}
@@ -276,15 +277,15 @@ export function SpotifyPageContent() {
 
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: DUR, delay: PAGE_START, ease: EASE }}
+          initial={{ opacity: 0, y: 24, filter: "blur(6px)" }}
+          animate={isInView ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
+          transition={{ duration: DUR_SLOW, delay: PAGE_START, ease: EASE_SMOOTH }}
           className="mb-12 text-center sm:mb-16"
         >
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
+            initial={{ opacity: 0, scale: 0.8 }}
             animate={isInView ? { opacity: 1, scale: 1 } : {}}
-            transition={{ duration: DUR, delay: PAGE_START, ease: EASE }}
+            transition={{ duration: 0.5, delay: PAGE_START, ease: EASE_BOUNCE }}
             className="mb-6 inline-flex items-center gap-3 rounded-full border border-[#1DB954]/20 bg-[#1DB954]/5 px-5 py-2.5 backdrop-blur-sm"
           >
             <motion.div animate={{ rotate: 360 }} transition={{ duration: 4, repeat: Infinity, ease: "linear" }}>
@@ -351,9 +352,10 @@ export function SpotifyPageContent() {
             ].map((stat, i) => (
               <motion.div
                 key={stat.label}
-                initial={{ opacity: 0, y: 20 }}
-                animate={statsInView ? { opacity: 1, y: 0 } : {}}
-                transition={{ duration: DUR, delay: 0.1 + i * SCROLL_STEP, ease: EASE }}
+                initial={{ opacity: 0, y: 20, scale: 0.9 }}
+                animate={statsInView ? { opacity: 1, y: 0, scale: 1 } : {}}
+                transition={{ duration: DUR, delay: 0.1 + i * SCROLL_STEP, ease: EASE_BOUNCE }}
+                whileHover={{ scale: 1.05, y: -2, transition: { duration: 0.15 } }}
                 className="flex flex-col items-center gap-2 rounded-2xl border border-[#1DB954]/10 bg-card/50 p-5 text-center hover:border-[#1DB954]/30 transition-colors"
               >
                 <stat.icon className="h-5 w-5 text-[#1DB954]" />

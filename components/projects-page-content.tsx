@@ -3,7 +3,7 @@
 import { motion, useInView, AnimatePresence } from "framer-motion"
 import { useRef, useEffect, useState, useMemo } from "react"
 import { Star, GitFork, ExternalLink, Code2, Search, Filter, ArrowUpRight, Archive } from "lucide-react"
-import { EASE, DUR, PAGE_START, PAGE_STEP, SCROLL_STEP } from "@/lib/animation"
+import { EASE, EASE_BOUNCE, EASE_SMOOTH, DUR, DUR_SLOW, PAGE_START, PAGE_STEP, SCROLL_STEP } from "@/lib/animation"
 
 // Easing function for counters
 function easeOut(t: number) {
@@ -184,23 +184,35 @@ export function ProjectsPageContent() {
       <div className="mx-auto max-w-6xl px-4">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: DUR, delay: PAGE_START, ease: EASE }}
+          initial={{ opacity: 0, y: 24, filter: "blur(6px)" }}
+          animate={isInView ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
+          transition={{ duration: DUR_SLOW, delay: PAGE_START, ease: EASE_SMOOTH }}
           className="mb-8"
         >
-          <span className="font-mono text-sm text-primary">{'// projects'}</span>
+          <motion.span 
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={isInView ? { opacity: 1, scale: 1 } : {}}
+            transition={{ duration: 0.3, delay: PAGE_START, ease: EASE_BOUNCE }}
+            className="font-mono text-sm text-primary inline-block"
+          >
+            {'// projects'}
+          </motion.span>
           <h1 className="mt-2 text-4xl font-bold text-foreground md:text-5xl lg:text-6xl">
             All <span className="text-gradient">Projects</span>
           </h1>
-          <p className="mt-4 max-w-2xl text-lg text-muted-foreground">
+          <motion.p 
+            initial={{ opacity: 0, y: 12 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: DUR, delay: PAGE_START + 0.1, ease: EASE }}
+            className="mt-4 max-w-2xl text-lg text-muted-foreground"
+          >
             Stuff I've built across my personal account and both orgs. Security tools, Discord bots, random side projects. A bit of everything.
-          </p>
+          </motion.p>
         </motion.div>
 
         {/* Stats bar */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: DUR, delay: PAGE_START + PAGE_STEP, ease: EASE }}
           className="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-4"
@@ -213,10 +225,11 @@ export function ProjectsPageContent() {
           ].map((stat, i) => (
             <motion.div
               key={stat.label}
-              initial={{ opacity: 0, y: 12 }}
-              animate={isInView ? { opacity: 1, y: 0 } : {}}
-              transition={{ delay: PAGE_START + PAGE_STEP * 2 + i * 0.04, type: "spring", stiffness: 280, damping: 22 }}
-              whileTap={{ scale: 0.98 }}
+              initial={{ opacity: 0, y: 16, scale: 0.9 }}
+              animate={isInView ? { opacity: 1, y: 0, scale: 1 } : {}}
+              transition={{ delay: PAGE_START + PAGE_STEP * 2 + i * 0.06, type: "spring", stiffness: 350, damping: 20 }}
+              whileHover={{ scale: 1.05, y: -2, transition: { duration: 0.15 } }}
+              whileTap={{ scale: 0.97 }}
               className="card-hover rounded-lg border border-border bg-card p-4 text-center cursor-default"
             >
               <div className="font-mono text-2xl font-bold text-primary">
@@ -335,9 +348,10 @@ export function ProjectsPageContent() {
                   href={repo.html_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: DUR, delay: Math.min(i * SCROLL_STEP, 0.35), ease: EASE }}
+                  initial={{ opacity: 0, y: 24, scale: 0.96 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  transition={{ duration: DUR, delay: Math.min(i * SCROLL_STEP, 0.4), ease: EASE }}
+                  whileHover={{ y: -4, scale: 1.02, transition: { duration: 0.2 } }}
                   whileTap={{ scale: 0.98 }}
                   className="card-hover group relative flex flex-col rounded-xl border border-border bg-card p-6"
                 >

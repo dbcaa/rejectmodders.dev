@@ -25,11 +25,15 @@ export function Navbar() {
 
   return (
     <>
-      {/* Header animates first - content waits for this to complete */}
+      {/* Header animates first (0-350ms) - content waits for this to complete */}
       <motion.header
-        initial={{ y: -64, opacity: 0 }}
+        initial={{ y: -72, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+        transition={{ 
+          duration: 0.35, 
+          ease: [0.22, 1, 0.36, 1],
+          opacity: { duration: 0.25 }
+        }}
         style={{ willChange: "transform, opacity" }}
         className={`fixed inset-x-0 top-0 z-40 transition-all duration-300 ${
           scrolled
