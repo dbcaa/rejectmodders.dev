@@ -2,7 +2,7 @@
 
 import { useInView } from "framer-motion"
 import { useRef, useEffect, useState, useMemo } from "react"
-import { Star, GitFork, ExternalLink, Code2, Search, Filter, Archive } from "lucide-react"
+import { Star, GitFork, ExternalLink, Code2, Search, Filter, Archive, ArrowUpRight } from "lucide-react"
 
 // Easing function for counters
 function easeOut(t: number) {
