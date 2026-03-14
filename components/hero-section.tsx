@@ -1,7 +1,7 @@
 "use client"
 
 import { motion, useScroll, useTransform } from "framer-motion"
-import { useRef } from "react"
+import { useRef, useState, useEffect } from "react"
 import { ChevronDown, ArrowRight, Shield, Terminal } from "lucide-react"
 import Link from "next/link"
 import dynamic from "next/dynamic"
@@ -32,9 +32,14 @@ const AnimatedText = ({ text, className }: { text: string; className?: string })
 
 export function HeroSection() {
   const ref = useRef<HTMLElement>(null)
+  const [mounted, setMounted] = useState(false)
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"], layoutEffect: false })
   const y = useTransform(scrollYProgress, [0, 1], ["0%", "30%"])
   const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0])
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   return (
     <section ref={ref} className="relative flex min-h-screen items-center justify-center px-4" style={{ overflow: "clip" }}>
@@ -46,8 +51,8 @@ export function HeroSection() {
         transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
       />
 
-      {/* Particles */}
-      <Particles count={55} />
+      {/* Particles - only render after mount to prevent hydration mismatch */}
+      {mounted && <Particles count={55} />}
 
       {/* Radial glow - more subtle */}
       <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at 50% 40%, color-mix(in oklch, var(--primary) 8%, transparent) 0%, transparent 55%)" }} />
