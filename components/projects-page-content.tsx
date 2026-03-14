@@ -1,8 +1,24 @@
 "use client"
 
-import { useInView } from "framer-motion"
+import { motion, useInView } from "framer-motion"
 import { useRef, useEffect, useState, useMemo } from "react"
 import { Star, GitFork, ExternalLink, Code2, Search, Filter, Archive, ArrowUpRight } from "lucide-react"
+
+// Animation variants
+const fadeInUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 }
+}
+
+const scaleIn = {
+  hidden: { opacity: 0, scale: 0.9 },
+  visible: { opacity: 1, scale: 1 }
+}
+
+const slideInLeft = {
+  hidden: { opacity: 0, x: -30 },
+  visible: { opacity: 1, x: 0 }
+}
 
 // Easing function for counters
 function easeOut(t: number) {
@@ -12,7 +28,7 @@ function easeOut(t: number) {
 function ProjectAnimatedNumber({ value, isInView, startSignal }: {
   value: number
   isInView: boolean
-  startSignal: number   // changes every time a new animation should begin
+  startSignal: number
 }) {
   const [display, setDisplay] = useState(0)
   const fromRef  = useRef(0)
@@ -27,7 +43,7 @@ function ProjectAnimatedNumber({ value, isInView, startSignal }: {
 
     if (from === to) return
 
-    const DURATION = 500 // ms - all counters share the same duration
+    const DURATION = 500
     const startTime = performance.now()
 
     cancelAnimationFrame(rafRef.current)
@@ -46,7 +62,6 @@ function ProjectAnimatedNumber({ value, isInView, startSignal }: {
 
     rafRef.current = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(rafRef.current)
-  // startSignal is intentionally in deps - it triggers re-animation on filter change
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isInView, startSignal])
 
@@ -99,7 +114,17 @@ const sources: { key: FilterSource; label: string; description: string }[] = [
 
 export function ProjectsPageContent() {
   const ref = useRef<HTMLDivElement>(null)
+  const headerRef = useRef<HTMLDivElement>(null)
+  const statsRef = useRef<HTMLDivElement>(null)
+  const filtersRef = useRef<HTMLDivElement>(null)
+  const gridRef = useRef<HTMLDivElement>(null)
+  
   const isInView = useInView(ref, { once: true })
+  const headerInView = useInView(headerRef, { once: true, amount: 0.5 })
+  const statsInView = useInView(statsRef, { once: true, amount: 0.3 })
+  const filtersInView = useInView(filtersRef, { once: true, amount: 0.5 })
+  const gridInView = useInView(gridRef, { once: true, amount: 0.1 })
+  
   const [repos, setRepos] = useState<Repo[]>([])
   const [loading, setLoading] = useState(true)
   const [filter, setFilter] = useState<FilterSource>("all")
@@ -132,16 +157,11 @@ export function ProjectsPageContent() {
 
   const filteredRepos = useMemo(() => {
     return repos.filter((repo) => {
-      // Source filter
       if (filter === "personal" && repo.owner.login !== "RejectModders") return false
       if (filter === "disutils" && repo.owner.login !== "disutils") return false
       if (filter === "vulnradar" && repo.owner.login !== "VulnRadar") return false
-
-      // Archived filter - default shows active only, toggled shows archived only
       if (showArchived && !repo.archived) return false
       if (!showArchived && repo.archived) return false
-
-      // Search
       if (searchQuery) {
         const q = searchQuery.toLowerCase()
         return (
@@ -171,8 +191,6 @@ export function ProjectsPageContent() {
     }
   }, [filteredRepos])
 
-  // Single signal that bumps whenever stats change - all 4 counters share the
-  // exact same value so they start their RAF loops at the same moment
   const [statsSignal, setStatsSignal] = useState(0)
   useEffect(() => {
     setStatsSignal(s => s + 1)
@@ -181,48 +199,91 @@ export function ProjectsPageContent() {
   return (
     <div ref={ref} className="relative pt-24 pb-16 md:pt-32 md:pb-24" style={{ overflow: "clip" }}>
       <div className="mx-auto max-w-6xl px-4">
-        {/* Header */}
-        <div className="mb-8">
-          <span className="font-mono text-sm text-primary">
+        {/* Header with animations */}
+        <motion.div 
+          ref={headerRef}
+          initial="hidden"
+          animate={headerInView ? "visible" : "hidden"}
+          className="mb-8"
+        >
+          <motion.span 
+            variants={slideInLeft}
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            className="font-mono text-sm text-primary inline-block"
+          >
             {'// projects'}
-          </span>
-          <h1 className="mt-2 text-4xl font-bold text-foreground md:text-5xl lg:text-6xl">
+          </motion.span>
+          <motion.h1 
+            variants={fadeInUp}
+            transition={{ duration: 0.5, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-2 text-4xl font-bold text-foreground md:text-5xl lg:text-6xl"
+          >
             All <span className="text-gradient">Projects</span>
-          </h1>
-          <p className="mt-4 max-w-2xl text-lg text-muted-foreground">
+          </motion.h1>
+          <motion.div
+            initial={{ scaleX: 0 }}
+            animate={headerInView ? { scaleX: 1 } : {}}
+            transition={{ duration: 0.5, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-2 h-1 w-20 rounded-full bg-primary origin-left"
+          />
+          <motion.p 
+            variants={fadeInUp}
+            transition={{ duration: 0.5, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-4 max-w-2xl text-lg text-muted-foreground"
+          >
             Stuff I've built across my personal account and both orgs. Security tools, Discord bots, random side projects. A bit of everything.
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
-        {/* Stats bar */}
-        <div className="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {/* Stats bar with stagger */}
+        <motion.div 
+          ref={statsRef}
+          className="mb-8 grid grid-cols-2 gap-3 sm:grid-cols-4"
+          initial="hidden"
+          animate={statsInView ? "visible" : "hidden"}
+          variants={{
+            hidden: { opacity: 0 },
+            visible: { opacity: 1, transition: { staggerChildren: 0.08 } }
+          }}
+        >
           {[
             { label: "Repositories", value: stats.totalRepos },
             { label: "Total Stars", value: stats.totalStars },
             { label: "Total Forks", value: stats.totalForks },
             { label: "Languages", value: stats.languages },
           ].map((stat) => (
-            <div
+            <motion.div
               key={stat.label}
+              variants={scaleIn}
+              transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
               className="card-hover rounded-lg border border-border bg-card p-4 text-center cursor-default"
             >
               <div className="font-mono text-2xl font-bold text-primary">
                 <ProjectAnimatedNumber value={stat.value} isInView={isInView} startSignal={statsSignal} />
               </div>
               <div className="mt-1 text-xs text-muted-foreground">{stat.label}</div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
-        {/* Filters */}
-        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        {/* Filters with animation */}
+        <motion.div 
+          ref={filtersRef}
+          initial={{ opacity: 0, y: 15 }}
+          animate={filtersInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+        >
           {/* Source filter */}
           <div className="flex flex-wrap gap-2">
-            {sources.map((source) => (
-              <button
+            {sources.map((source, i) => (
+              <motion.button
                 key={source.key}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={filtersInView ? { opacity: 1, scale: 1 } : {}}
+                transition={{ duration: 0.3, delay: i * 0.05, ease: [0.16, 1, 0.3, 1] }}
                 onClick={() => setFilter(source.key)}
-                className={`rounded-lg px-4 py-2 font-mono text-xs transition-all ${
+                className={`rounded-lg px-4 py-2 font-mono text-xs ${
                   filter === source.key
                     ? "border border-primary/50 bg-primary/10 text-primary shadow-[0_0_10px_oklch(0.58_0.2_15/0.1)]"
                     : "border border-border bg-card text-muted-foreground hover:border-primary/30 hover:text-foreground"
@@ -230,7 +291,7 @@ export function ProjectsPageContent() {
               >
                 <span className="block font-semibold">{source.label}</span>
                 <span className="block text-[10px] opacity-60">{source.description}</span>
-              </button>
+              </motion.button>
             ))}
           </div>
 
@@ -238,7 +299,7 @@ export function ProjectsPageContent() {
           <div className="flex items-center gap-3">
             <button
               onClick={() => setShowArchived(!showArchived)}
-              className={`flex items-center gap-1.5 rounded-lg px-3 py-2 font-mono text-xs transition-all ${
+              className={`flex items-center gap-1.5 rounded-lg px-3 py-2 font-mono text-xs ${
                 showArchived
                   ? "border border-primary/50 bg-primary/10 text-primary"
                   : "border border-border bg-card text-muted-foreground hover:text-foreground"
@@ -254,21 +315,29 @@ export function ProjectsPageContent() {
                 placeholder="Search repos..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-48 rounded-lg border border-border bg-card py-2 pl-9 pr-3 font-mono text-xs text-foreground placeholder-muted-foreground/60 transition-all focus:border-primary/50 focus:outline-none focus:ring-1 focus:ring-primary/30 sm:w-56"
+                className="w-48 rounded-lg border border-border bg-card py-2 pl-9 pr-3 font-mono text-xs text-foreground placeholder-muted-foreground/60 focus:border-primary/50 focus:outline-none focus:ring-1 focus:ring-primary/30 sm:w-56"
               />
             </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Language chips */}
         {languages.length > 0 && (
-          <div className="mb-6 flex flex-wrap gap-2">
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={filtersInView ? { opacity: 1 } : {}}
+            transition={{ duration: 0.4, delay: 0.2 }}
+            className="mb-6 flex flex-wrap gap-2"
+          >
             <span className="flex items-center gap-1 text-xs text-muted-foreground">
               <Filter className="h-3 w-3" /> Languages:
             </span>
-            {languages.map((lang) => (
-              <span
+            {languages.map((lang, i) => (
+              <motion.span
                 key={lang}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={filtersInView ? { opacity: 1, scale: 1 } : {}}
+                transition={{ duration: 0.3, delay: 0.3 + i * 0.03 }}
                 className="flex items-center gap-1.5 rounded-md border border-border bg-secondary px-2 py-1 text-xs text-muted-foreground"
               >
                 <span
@@ -276,34 +345,48 @@ export function ProjectsPageContent() {
                   style={{ backgroundColor: languageColors[lang] || "#888" }}
                 />
                 {lang}
-              </span>
+              </motion.span>
             ))}
-          </div>
+          </motion.div>
         )}
 
         {/* Projects grid */}
-        {loading ? (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="animate-pulse rounded-xl border border-border bg-card p-6">
-                <div className="mb-3 h-5 w-1/2 rounded bg-muted" />
-                <div className="mb-2 h-4 w-full rounded bg-muted" />
-                <div className="mb-4 h-4 w-3/4 rounded bg-muted" />
-                <div className="flex gap-3">
-                  <div className="h-3 w-16 rounded bg-muted" />
-                  <div className="h-3 w-12 rounded bg-muted" />
+        <div ref={gridRef}>
+          {loading ? (
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="animate-pulse rounded-xl border border-border bg-card p-6">
+                  <div className="mb-3 h-5 w-1/2 rounded bg-muted" />
+                  <div className="mb-2 h-4 w-full rounded bg-muted" />
+                  <div className="mb-4 h-4 w-3/4 rounded bg-muted" />
+                  <div className="flex gap-3">
+                    <div className="h-3 w-16 rounded bg-muted" />
+                    <div className="h-3 w-12 rounded bg-muted" />
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              ))}
+            </div>
+          ) : (
+            <motion.div 
+              className="grid gap-4 md:grid-cols-2 lg:grid-cols-3"
+              initial="hidden"
+              animate={gridInView ? "visible" : "hidden"}
+              variants={{
+                hidden: { opacity: 0 },
+                visible: { opacity: 1, transition: { staggerChildren: 0.04 } }
+              }}
+            >
               {filteredRepos.map((repo) => (
-                <a
+                <motion.a
                   key={repo.id}
                   href={repo.html_url}
                   target="_blank"
                   rel="noopener noreferrer"
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    visible: { opacity: 1, y: 0 }
+                  }}
+                  transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                   className="card-hover group relative flex flex-col rounded-xl border border-border bg-card p-6"
                 >
                   {/* Archived badge */}
@@ -327,11 +410,11 @@ export function ProjectsPageContent() {
                         </span>
                         <span className="text-muted-foreground/40">/</span>
                       </div>
-                      <h3 className="truncate font-mono text-sm font-semibold text-foreground transition-colors group-hover:text-primary">
+                      <h3 className="truncate font-mono text-sm font-semibold text-foreground group-hover:text-primary">
                         {repo.name}
                       </h3>
                     </div>
-                    <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground opacity-0 transition-all group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                    <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground opacity-0 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                   </div>
 
                   {/* Description */}
@@ -379,37 +462,51 @@ export function ProjectsPageContent() {
                       </span>
                     </div>
                   )}
-                </a>
+                </motion.a>
               ))}
-          </div>
-        )}
+            </motion.div>
+          )}
+        </div>
 
         {!loading && filteredRepos.length === 0 && (
-          <div className="py-16 text-center">
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.4 }}
+            className="py-16 text-center"
+          >
             <Code2 className="mx-auto mb-4 h-12 w-12 text-muted-foreground/30" />
             <p className="font-mono text-sm text-muted-foreground">No repositories found matching your filters.</p>
-          </div>
+          </motion.div>
         )}
 
         {/* View on GitHub */}
-        <div className="mt-12 flex flex-wrap justify-center gap-4">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={gridInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.5, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          className="mt-12 flex flex-wrap justify-center gap-4"
+        >
           {[
             { label: "RejectModders", url: "https://github.com/RejectModders" },
             { label: "Disutils Team", url: "https://github.com/disutils" },
             { label: "VulnRadar", url: "https://github.com/vulnradar" },
-          ].map((org) => (
-            <a
+          ].map((org, i) => (
+            <motion.a
               key={org.label}
               href={org.url}
               target="_blank"
               rel="noopener noreferrer"
+              initial={{ opacity: 0, y: 10 }}
+              animate={gridInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.4, delay: 0.4 + i * 0.1 }}
               className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-5 py-2.5 font-mono text-sm text-muted-foreground hover:border-primary/30 hover:text-primary"
             >
               {org.label} on GitHub
               <ExternalLink className="h-3.5 w-3.5" />
-            </a>
+            </motion.a>
           ))}
-        </div>
+        </motion.div>
       </div>
     </div>
   )

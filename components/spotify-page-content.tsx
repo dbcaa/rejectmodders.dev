@@ -1,7 +1,7 @@
 "use client"
 
-import { motion } from "framer-motion"
-import { useState, useEffect } from "react"
+import { motion, useInView } from "framer-motion"
+import { useRef, useState, useEffect } from "react"
 import { Music2, Headphones, Radio, ExternalLink, Disc3 } from "lucide-react"
 
 const SPOTIFY_UID = "31tfph3mamrlj4uch76albbptgay"
@@ -72,14 +72,25 @@ function SpotifyImage({ src, alt, skeletonRows }: { src: string; alt: string; sk
 
 export function SpotifyPageContent() {
   const [timestamp, setTimestamp] = useState<number>(0)
+  const headerRef = useRef<HTMLDivElement>(null)
+  const nowPlayingRef = useRef<HTMLDivElement>(null)
+  const recentRef = useRef<HTMLDivElement>(null)
+  
+  const headerInView = useInView(headerRef, { once: true, amount: 0.5 })
+  const nowPlayingInView = useInView(nowPlayingRef, { once: true, amount: 0.3 })
+  const recentInView = useInView(recentRef, { once: true, amount: 0.3 })
+  
   useEffect(() => { setTimestamp(Date.now()) }, [])
 
   return (
     <div className="relative pt-24 pb-16 md:pt-32 md:pb-24" style={{ overflow: "clip" }}>
-      {/* Ambient orb */}
-      <div
+      {/* Ambient orb with animation */}
+      <motion.div
+        initial={{ opacity: 0, scale: 0.5 }}
+        animate={{ opacity: 0.04, scale: 1 }}
+        transition={{ duration: 1.2, ease: "easeOut" }}
         className="pointer-events-none absolute left-1/2 top-1/3 -z-10 h-150 w-150 -translate-x-1/2 -translate-y-1/2 rounded-full"
-        style={{ background: "radial-gradient(circle, #1DB954 0%, transparent 70%)", opacity: 0.04 }}
+        style={{ background: "radial-gradient(circle, #1DB954 0%, transparent 70%)" }}
       />
 
       {/* Floating notes */}
@@ -90,38 +101,102 @@ export function SpotifyPageContent() {
       <FloatingNote delay={1.8} x="50%" icon="♬" />
 
       <div className="mx-auto max-w-4xl px-4">
-        {/* Header */}
-        <div className="mb-16 text-center">
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#1DB954]/30 bg-[#1DB954]/5 px-4 py-1.5">
+        {/* Header with animations */}
+        <motion.div 
+          ref={headerRef}
+          className="mb-16 text-center"
+          initial="hidden"
+          animate={headerInView ? "visible" : "hidden"}
+        >
+          <motion.div 
+            variants={{
+              hidden: { opacity: 0, y: -20, scale: 0.9 },
+              visible: { opacity: 1, y: 0, scale: 1 }
+            }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+            className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#1DB954]/30 bg-[#1DB954]/5 px-4 py-1.5"
+          >
             <motion.div animate={{ rotate: 360 }} transition={{ duration: 3, repeat: Infinity, ease: "linear" }}>
               <Disc3 className="h-4 w-4 text-[#1DB954]" />
             </motion.div>
             <span className="font-mono text-xs text-[#1DB954]">Spotify Connected</span>
-          </div>
+          </motion.div>
 
-          <span className="block font-mono text-sm text-primary">{'// music'}</span>
-          <h1 className="mt-2 text-4xl font-bold text-foreground md:text-5xl lg:text-6xl">
+          <motion.span 
+            variants={{
+              hidden: { opacity: 0, x: -20 },
+              visible: { opacity: 1, x: 0 }
+            }}
+            transition={{ duration: 0.4, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            className="block font-mono text-sm text-primary"
+          >
+            {'// music'}
+          </motion.span>
+          
+          <motion.h1 
+            variants={{
+              hidden: { opacity: 0, y: 20 },
+              visible: { opacity: 1, y: 0 }
+            }}
+            transition={{ duration: 0.5, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-2 text-4xl font-bold text-foreground md:text-5xl lg:text-6xl"
+          >
             What I&apos;m <span className="text-gradient">Listening To</span>
-          </h1>
-          <div className="mx-auto mt-3 h-1 w-20 rounded-full bg-[#1DB954]" />
-          <p className="mt-4 text-lg text-muted-foreground">
+          </motion.h1>
+          
+          <motion.div
+            initial={{ scaleX: 0 }}
+            animate={headerInView ? { scaleX: 1 } : {}}
+            transition={{ duration: 0.5, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            className="mx-auto mt-3 h-1 w-20 rounded-full bg-[#1DB954] origin-center"
+          />
+          
+          <motion.p 
+            variants={{
+              hidden: { opacity: 0, y: 15 },
+              visible: { opacity: 1, y: 0 }
+            }}
+            transition={{ duration: 0.5, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-4 text-lg text-muted-foreground"
+          >
             Whatever I've been playing recently. Taste varies a lot, fair warning.
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
         <div className="flex flex-col items-center gap-12">
           {/* Now Playing */}
-          <div className="w-full max-w-lg">
-            <div className="mb-4 flex items-center gap-3">
+          <motion.div 
+            ref={nowPlayingRef}
+            className="w-full max-w-lg"
+            initial={{ opacity: 0, y: 30 }}
+            animate={nowPlayingInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              animate={nowPlayingInView ? { opacity: 1, x: 0 } : {}}
+              transition={{ duration: 0.4, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+              className="mb-4 flex items-center gap-3"
+            >
               <div className="flex items-center gap-2">
                 <EqualizerBars playing />
                 <span className="font-mono text-sm font-semibold text-[#1DB954]">Now Playing</span>
               </div>
-              <div className="h-px flex-1 bg-[#1DB954]/20" />
+              <motion.div 
+                initial={{ scaleX: 0 }}
+                animate={nowPlayingInView ? { scaleX: 1 } : {}}
+                transition={{ duration: 0.4, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                className="h-px flex-1 bg-[#1DB954]/20 origin-left" 
+              />
               <Music2 className="h-4 w-4 text-[#1DB954]/60" />
-            </div>
+            </motion.div>
 
-            <div className="card-hover relative overflow-hidden rounded-2xl border border-[#1DB954]/20 bg-card">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={nowPlayingInView ? { opacity: 1, scale: 1 } : {}}
+              transition={{ duration: 0.5, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+              className="card-hover relative overflow-hidden rounded-2xl border border-[#1DB954]/20 bg-card"
+            >
               <div className="pointer-events-none absolute inset-0 opacity-[0.04]"
                 style={{ background: "radial-gradient(ellipse at 50% 0%, #1DB954, transparent 60%)" }} />
 
@@ -143,21 +218,42 @@ export function SpotifyPageContent() {
                   <ExternalLink className="h-3 w-3" /> Open Spotify Profile
                 </a>
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
           {/* Recently Played */}
-          <div className="w-full max-w-lg">
-            <div className="mb-4 flex items-center gap-3">
+          <motion.div 
+            ref={recentRef}
+            className="w-full max-w-lg"
+            initial={{ opacity: 0, y: 30 }}
+            animate={recentInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <motion.div 
+              initial={{ opacity: 0, x: -20 }}
+              animate={recentInView ? { opacity: 1, x: 0 } : {}}
+              transition={{ duration: 0.4, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+              className="mb-4 flex items-center gap-3"
+            >
               <div className="flex items-center gap-2">
                 <Headphones className="h-4 w-4 text-[#1DB954]" />
                 <span className="font-mono text-sm font-semibold text-[#1DB954]">Recently Played</span>
               </div>
-              <div className="h-px flex-1 bg-[#1DB954]/20" />
+              <motion.div 
+                initial={{ scaleX: 0 }}
+                animate={recentInView ? { scaleX: 1 } : {}}
+                transition={{ duration: 0.4, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+                className="h-px flex-1 bg-[#1DB954]/20 origin-left" 
+              />
               <Radio className="h-4 w-4 text-[#1DB954]/60" />
-            </div>
+            </motion.div>
 
-            <div className="card-hover relative overflow-hidden rounded-2xl border border-[#1DB954]/20 bg-card">
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={recentInView ? { opacity: 1, scale: 1 } : {}}
+              transition={{ duration: 0.5, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+              className="card-hover relative overflow-hidden rounded-2xl border border-[#1DB954]/20 bg-card"
+            >
               <div className="pointer-events-none absolute inset-0 opacity-[0.03]"
                 style={{ background: "radial-gradient(ellipse at 50% 0%, #1DB954, transparent 60%)" }} />
 
@@ -175,8 +271,8 @@ export function SpotifyPageContent() {
                   <ExternalLink className="h-3 w-3" /> View Full History
                 </a>
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
       </div>
     </div>
