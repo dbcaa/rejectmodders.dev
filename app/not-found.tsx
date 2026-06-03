@@ -44,11 +44,11 @@ export default function NotFound() {
   const lines = [
     { text: `$ curl -sI https://rejectmodders.dev${path || "/???"}`, delay: 0.4,  color: "text-foreground/90" },
     { text: "  Resolving DNS...",                               delay: 0.75, color: "text-muted-foreground" },
-    { text: "  Connected to 76.76.21.21 (Vercel Edge)",        delay: 1.0,  color: "text-green-400" },
+    { text: "  Connected to 76.76.21.21",                      delay: 1.0,  color: "text-green-400" },
     { text: "",                                                 delay: 1.2,  color: "" },
     { text: "  HTTP/2 404  Not Found",                         delay: 1.3,  color: "text-red-400 font-semibold" },
     { text: "  content-type: text/html; charset=utf-8",        delay: 1.45, color: "text-muted-foreground" },
-    { text: "  x-vercel-id: iad1::iad1::rejectmodders",        delay: 1.6,  color: "text-muted-foreground" },
+    { text: "  x-request-id: rm::iad1::rejectmodders",         delay: 1.6,  color: "text-muted-foreground" },
     { text: "",                                                 delay: 1.75, color: "" },
     { text: `$ traceroute ${path || "this-page"}`,             delay: 1.85, color: "text-foreground/90" },
     { text: "  1   gateway (192.168.1.1)      0.4 ms",         delay: 2.1,  color: "text-muted-foreground" },

@@ -1,7 +1,5 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter, JetBrains_Mono } from 'next/font/google'
-import { Analytics } from '@vercel/analytics/next'
-import { SpeedInsights } from '@vercel/speed-insights/next'
 import { CustomCursor } from '@/components/layout/custom-cursor'
 import { PageTransition } from '@/components/layout/page-transition'
 import { ScrollToTop } from '@/components/layout/scroll-to-top'
@@ -86,8 +84,6 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           <PageTransition>
             {children}
           </PageTransition>
-          <Analytics />
-          <SpeedInsights />
         </ThemeProvider>
       </body>
     </html>

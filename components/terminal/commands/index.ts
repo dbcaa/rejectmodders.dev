@@ -79,7 +79,7 @@ export const ASYNC_CMDS: Record<string, AsyncCommandHandler> = {
       return [
         L("Site Status: ONLINE", col.green),
         L(`Response time: ${ping}ms`, col.fg),
-        L("Deployment: Vercel Edge Network", col.muted),
+        L("Deployment: Edge Network", col.muted),
         BR(),
       ]
     } catch {

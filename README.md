@@ -88,5 +88,5 @@ Then head to [github.com/RejectModders/rejectmodders.dev](https://github.com/Rej
 | Styling | [Tailwind CSS v4](https://tailwindcss.com) |
 | Components | [shadcn/ui](https://ui.shadcn.com) |
 | Animations | [Framer Motion](https://framer.com/motion) |
-| Deployment | [Vercel](https://vercel.com) |
+| Deployment | Self-hosted |
 

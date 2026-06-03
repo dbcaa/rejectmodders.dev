@@ -33,11 +33,11 @@ export const filesystemCommands: Record<string, CommandHandler> = {
   ],
 
   "cat /etc/os-release": () => [
-    L('NAME="Vercel Edge OS"', col.fg),
+    L('NAME="Custom Edge OS"', col.fg),
     L('VERSION="1.0.0 (LTS)"', col.fg),
-    L('ID=vercel', col.fg),
+    L('ID=custom', col.fg),
     L('ID_LIKE=debian', col.fg),
-    L('PRETTY_NAME="Vercel Edge OS 1.0.0 LTS"', col.green),
+    L('PRETTY_NAME="Custom Edge OS 1.0.0 LTS"', col.green),
     L('VERSION_CODENAME=rejectmodders', col.primary),
     L('HOME_URL="https://rejectmodders.dev"', col.cyan),
     BR(),

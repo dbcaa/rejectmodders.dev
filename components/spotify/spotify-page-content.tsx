@@ -248,7 +248,7 @@ export function SpotifyPageContent() {
               <Radio className="h-4 w-4 text-[#1DB954]/60" />
             </motion.div>
 
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={recentInView ? { opacity: 1, scale: 1 } : {}}
               transition={{ duration: 0.5, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}

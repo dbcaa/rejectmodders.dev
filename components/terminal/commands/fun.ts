@@ -122,7 +122,7 @@ export const funCommands: Record<string, CommandHandler> = {
   weather: () => [
     L("Weather for: rejectmodders.dev (76.76.21.21)", col.primary),
     BR(),
-    L("  Location:    The Cloud, Vercel Edge Region", col.fg),
+    L("  Location:    The Cloud, Edge Network", col.fg),
     L("  Condition:   Partly Cloudy with a chance of downtime", col.fg),
     L("  Temp:        20C (68F)", col.fg),
     L("  Humidity:    69%", col.fg),
@@ -457,7 +457,7 @@ export const funCommands: Record<string, CommandHandler> = {
       L("  [*] information_schema", col.fg),
       L("  [*] rejectmodders_prod", col.green),
       BR(),
-      L("  [!] just kidding - this site has no SQL. It's Next.js + Vercel.", col.muted),
+      L("  [!] just kidding - this site has no SQL. It's Next.js.", col.muted),
       L("  [!] and VulnRadar would catch that anyway.", col.primary),
       BR(),
     ]
@@ -489,7 +489,7 @@ export const funCommands: Record<string, CommandHandler> = {
       L(`- Target Host: ${target}`, col.fg),
       L("- Start Time: " + new Date().toUTCString(), col.muted),
       BR(),
-      L("+ Server: Vercel (no version disclosure - good)", col.green),
+      L("+ Server: nginx (no version disclosure - good)", col.green),
       L("+ X-Frame-Options: DENY - good security posture", col.green),
       L("+ HSTS header present and correct", col.green),
       L("+ CSP header present", col.green),
@@ -602,7 +602,7 @@ export const funCommands: Record<string, CommandHandler> = {
     L("rm: use --no-preserve-root to override this failsafe", col.red),
     BR(),
     L("  Not gonna do it.", col.green),
-    L("  The site stays up. Vercel has backups anyway.", col.muted),
+    L("  The site stays up.", col.muted),
     BR(),
   ],
 
@@ -618,7 +618,7 @@ export const funCommands: Record<string, CommandHandler> = {
   screenfetch: () => [
     L("  rm@rejectmodders.dev", col.primary),
     L("  ─────────────────────────────────", col.muted),
-    L("  OS:       Vercel Edge Linux x86_64", col.fg),
+    L("  OS:       Custom Linux x86_64", col.fg),
     L("  Host:     rejectmodders.dev", col.fg),
     L("  Kernel:   Next.js 16.2.7 (Turbopack)", col.fg),
     L("  Shell:    rm-terminal v2.0", col.fg),
@@ -641,7 +641,7 @@ export const funCommands: Record<string, CommandHandler> = {
   ],
 
   uname: () => [
-    L("Linux rejectmodders.dev 6.1.0-vercel #1 SMP PREEMPT Next.js x86_64 GNU/Linux", col.fg),
+    L("Linux rejectmodders.dev 6.1.0 #1 SMP PREEMPT Next.js x86_64 GNU/Linux", col.fg),
     BR(),
   ],
 

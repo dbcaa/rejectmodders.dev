@@ -238,7 +238,7 @@ export const devCommands: Record<string, CommandHandler> = {
     const sub = (args ?? "").replace(/brew\s*/i, "").trim()
     return [
       L(`==> ${sub || "help"}`, col.green),
-      L(`Error: Homebrew is not supported on Vercel Edge Runtime.`, col.red),
+      L(`Error: Homebrew is not supported on this runtime.`, col.red),
       L(`Try: sudo apt install ${sub || "<package>"}`, col.muted),
       BR(),
     ]

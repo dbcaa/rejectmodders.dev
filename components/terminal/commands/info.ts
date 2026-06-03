@@ -62,7 +62,7 @@ export const infoCommands: Record<string, CommandHandler> = {
     L("Personal portfolio built with:", col.fg),
     L("  Next.js 16, TypeScript, Tailwind CSS v4", col.muted),
     L("  Framer Motion, shadcn/ui", col.muted),
-    L("  Deployed on Vercel", col.muted),
+    L("  Self-hosted", col.muted),
     BR(),
     L("Source: github.com/RejectModders/rejectmodders.dev", col.cyan),
     BR(),

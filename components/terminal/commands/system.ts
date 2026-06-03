@@ -7,7 +7,7 @@ export const systemCommands: Record<string, CommandHandler> = {
   date: () => [L(new Date().toString(), col.fg), BR()],
 
   uname: () => [
-    L("Linux rejectmodders.dev 6.1.0-vercel #1 SMP PREEMPT Next.js x86_64 GNU/Linux", col.fg),
+    L("Linux rejectmodders.dev 6.1.0 #1 SMP PREEMPT Next.js x86_64 GNU/Linux", col.fg),
     BR(),
   ],
 
@@ -18,8 +18,6 @@ export const systemCommands: Record<string, CommandHandler> = {
     L("PATH=/usr/local/bin:/usr/bin:/bin", col.fg),
     L("NODE_ENV=production", col.fg),
     L("NEXT_RUNTIME=edge", col.fg),
-    L("VERCEL=1", col.fg),
-    L("VERCEL_ENV=production", col.fg),
     L("FLAG=rm{y0u_f0und_th3_env_fl4g}", col.red),
     BR(),
   ],
@@ -27,7 +25,7 @@ export const systemCommands: Record<string, CommandHandler> = {
   neofetch: () => [
     L("  ____  __  __    rm@rejectmodders.dev", col.primary),
     L(" |  _ \\|  \\/  |   -------------------------", col.primary),
-    L(" | |_) | |\\/| |   OS:     Vercel Edge Linux", col.fg),
+    L(" | |_) | |\\/| |   OS:     Custom Linux", col.fg),
     L(" |  _ <| |  | |   Host:   rejectmodders.dev", col.fg),
     L(" |_| \\_\\_|  |_|   Kernel: Next.js 16", col.fg),
     L("                  Shell:  rm-terminal v2.0", col.fg),
@@ -49,7 +47,7 @@ export const systemCommands: Record<string, CommandHandler> = {
     BR(),
     L("  PID USER      PR  NI    VIRT    RES  %CPU  %MEM COMMAND", col.primary),
     L("    1 rm         0   0  123456   4200   0.3   1.0 next-server", col.fg),
-    L("    2 rm         0   0   98765   3100   0.1   0.7 vercel-edge", col.fg),
+    L("    2 rm         0   0   98765   3100   0.1   0.7 node-runner", col.fg),
     L("    3 rm         0   0   45678   2100   0.0   0.5 tailwind", col.fg),
     L("   69 rm        20   0    1337    420   0.0   0.1 easter-egg", col.green),
     BR(),
@@ -60,7 +58,7 @@ export const systemCommands: Record<string, CommandHandler> = {
   ps: () => [
     L("  PID TTY          TIME CMD", col.primary),
     L("    1 ?        00:00:01 next-server", col.fg),
-    L("    2 ?        00:00:00 vercel-edge", col.fg),
+    L("    2 ?        00:00:00 node-runner", col.fg),
     L("   69 pts/0    00:00:00 easter-egg", col.green),
     L("  420 pts/0    00:00:00 bash", col.fg),
     L("  421 pts/0    00:00:00 ps", col.fg),
@@ -95,7 +93,7 @@ export const systemCommands: Record<string, CommandHandler> = {
 
   df: () => [
     L("Filesystem       Size  Used Avail Use% Mounted on", col.primary),
-    L("/dev/vercel      100G  4.2G   96G   4% /", col.fg),
+    L("/dev/sda0        100G  4.2G   96G   4% /", col.fg),
     L("/dev/cdn         999G  420G  579G  42% /public", col.fg),
     L("tmpfs            420M   69M  351M  16% /tmp", col.fg),
     L("feelings          ∞G    ∞G    0G  100% /dev/null", col.red),
@@ -162,7 +160,7 @@ export const systemCommands: Record<string, CommandHandler> = {
     BR(),
     L("...", col.muted),
     L("...", col.muted),
-    L("just kidding. Vercel handles uptime.", col.green),
+    L("just kidding. the site stays up.", col.green),
     BR(),
   ],
 
@@ -225,7 +223,7 @@ export const systemCommands: Record<string, CommandHandler> = {
   mount: () => [
     L("/dev/sda1 on / type ext4 (rw,relatime)", col.fg),
     L("tmpfs on /tmp type tmpfs (rw,nosuid,nodev)", col.fg),
-    L("vercel on /var/vercel type vercelfs (ro,edge)", col.fg),
+    L("overlay on /var/cdn type overlayfs (ro,edge)", col.fg),
     BR(),
   ],
 
@@ -249,7 +247,7 @@ export const systemCommands: Record<string, CommandHandler> = {
   speedtest: () => [
     L("Speedtest by Ookla", col.primary),
     BR(),
-    L("  Server:   Vercel Edge (The Cloud)", col.fg),
+    L("  Server:   CDN Edge (The Cloud)", col.fg),
     L("  Ping:     4 ms", col.green),
     L("  Download: ████████████████████ 420.69 Mbps", col.green),
     L("  Upload:   ████████████████░░░░ 360.00 Mbps", col.green),
