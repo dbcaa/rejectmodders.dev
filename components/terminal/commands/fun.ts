@@ -349,4 +349,320 @@ export const funCommands: Record<string, CommandHandler> = {
     L("(also fake - but you knew that)", col.muted),
     BR(),
   ],
+
+  leet: (args) => {
+    const txt = (args ?? "").replace(/^leet\s*/i, "").trim() || "hello world"
+    const map: Record<string, string> = {
+      a:"4",e:"3",g:"9",i:"1",o:"0",s:"5",t:"7",l:"|",b:"8",z:"2"
+    }
+    const encoded = txt.toLowerCase().split("").map(c => map[c] ?? c).join("")
+    return [
+      L(`  Input:  ${txt}`, col.muted),
+      L(`  1337:   ${encoded}`, col.green),
+      BR(),
+    ]
+  },
+
+  crypto: () => {
+    const prices = [
+      ["BTC", (95000 + Math.random() * 5000).toFixed(2), "+2.4%"],
+      ["ETH", (3200 + Math.random() * 200).toFixed(2), "-0.8%"],
+      ["SOL", (180 + Math.random() * 20).toFixed(2), "+5.1%"],
+      ["DOGE", (0.15 + Math.random() * 0.05).toFixed(4), "+69.0%"],
+      ["RM",  "1337.00", "+∞%"],
+    ]
+    return [
+      L("# Crypto Prices (totally real)", col.primary),
+      L("  Symbol    Price (USD)    24h Change", col.muted),
+      L("  ──────    ───────────    ──────────", col.muted),
+      ...prices.map(([sym, price, chg]) =>
+        L(`  ${sym.padEnd(8)}  $${String(price).padEnd(13)}  ${chg}`, chg.startsWith("+") ? col.green : col.red)
+      ),
+      BR(),
+      L("  RM coin is not listed anywhere. We're saving it for the moon.", col.muted),
+      BR(),
+    ]
+  },
+
+  coffee: () => [
+    L("       ( (", col.yellow),
+    L("        ) )", col.yellow),
+    L("     ..........", col.fg),
+    L("     |        |]", col.fg),
+    L("     \\        /", col.fg),
+    L("      `------'", col.fg),
+    BR(),
+    L("  ☕  Coffee: brewed. Code: unwritten.", col.muted),
+    L("  Estimated coding time before next cup: 12 minutes.", col.muted),
+    BR(),
+  ],
+
+  aquarium: () => [
+    L("  ≋≋≋≋≋≋≋≋≋≋≋≋≋≋≋≋≋≋≋≋≋≋≋≋≋≋≋≋≋≋≋", "text-blue-400"),
+    L("       ><(((º>          ><>        ", "text-cyan-400"),
+    L("   ~  ·  ·  ·  ·  ·  ·  ·  ·  ~  ", "text-blue-300"),
+    L("            <°)))><               ", "text-yellow-400"),
+    L("  ·  ·  ·  ·  ·  ·  ·  ·  ·  ·  ", "text-blue-300"),
+    L("       ><>          ><(((º>       ", "text-green-400"),
+    L("  ≋≋≋≋≋≋≋≋≋≋≋≋≋≋≋≋≋≋≋≋≋≋≋≋≋≋≋≋≋≋≋", "text-blue-400"),
+    BR(),
+    L("  ASCII Aquarium v1.0 - no fish were harmed", col.muted),
+    BR(),
+  ],
+
+  moon: () => {
+    const phase = Math.floor((Date.now() / 86400000) % 29.53)
+    const phases = ["🌑","🌒","🌓","🌔","🌕","🌖","🌗","🌘"]
+    const idx = Math.floor(phase / 29.53 * 8)
+    const names = ["New Moon","Waxing Crescent","First Quarter","Waxing Gibbous","Full Moon","Waning Gibbous","Last Quarter","Waning Crescent"]
+    return [
+      L(`  ${phases[idx]}  ${names[idx]}`, col.fg),
+      L(`  Day ${phase} of lunar cycle`, col.muted),
+      BR(),
+      L("  (actual moon phase based on today's date)", col.muted),
+      BR(),
+    ]
+  },
+
+  msfconsole: () => [
+    L("       =[ metasploit v6.3.0                          ]", col.red),
+    L("+ -- --=[ 2374 exploits - 1232 auxiliary - 413 post  ]", col.red),
+    L("+ -- --=[ 1395 payloads - 46 encoders - 11 nops      ]", col.red),
+    BR(),
+    L("msf6 > search vulnradar", col.green),
+    L("", col.muted),
+    L("  Matching Modules", col.fg),
+    L("  ================", col.fg),
+    BR(),
+    L("  # Name                         Disclosure Date  Rank    Description", col.muted),
+    L("  0 exploit/web/vulnradar/cool    2024-01-01       normal  VulnRadar Scanner (very cool)", col.green),
+    BR(),
+    L("msf6 > use 0", col.green),
+    L("msf6 exploit(vulnradar) > run", col.green),
+    L("[*] Started reverse handler on 0.0.0.0:4444", col.fg),
+    L("[+] Target is extremely secure. Aborting.", col.red),
+    L("[*] VulnRadar wins again.", col.yellow),
+    BR(),
+  ],
+
+  sqlmap: (args) => {
+    const target = (args ?? "").replace(/^sqlmap\s*/i, "").trim() || "https://rejectmodders.dev"
+    return [
+      L(`sqlmap -u "${target}" --dbs`, col.muted),
+      BR(),
+      L("  [*] testing connection to target URL...", col.fg),
+      L("  [*] testing if the target URL content is stable...", col.fg),
+      L("  [!] heuristic (basic) test shows that GET parameter might be injectable", col.yellow),
+      L("  [*] available databases [2]:", col.fg),
+      L("  [*] information_schema", col.fg),
+      L("  [*] rejectmodders_prod", col.green),
+      BR(),
+      L("  [!] just kidding - this site has no SQL. It's Next.js + Vercel.", col.muted),
+      L("  [!] and VulnRadar would catch that anyway.", col.primary),
+      BR(),
+    ]
+  },
+
+  gobuster: (args) => {
+    const target = (args ?? "").replace(/^gobuster\s*/i, "").trim() || "rejectmodders.dev"
+    return [
+      L(`gobuster dir -u https://${target} -w /usr/share/wordlists/common.txt`, col.muted),
+      BR(),
+      L("  /about                (Status: 200) [Size: 42069]", col.green),
+      L("  /projects             (Status: 200) [Size: 13370]", col.green),
+      L("  /friends              (Status: 200) [Size: 6969]", col.green),
+      L("  /spotify              (Status: 200) [Size: 1337]", col.green),
+      L("  /api/github           (Status: 200) [Size: 4200]", col.green),
+      L("  /admin                (Status: 403) [Size: 0]", col.red),
+      L("  /secrets              (Status: 404) [Size: 0]", col.muted),
+      L("  /.env                 (Status: 404) [Size: 0]", col.muted),
+      BR(),
+      L("  Found: 5 paths. Nothing juicy. Try harder.", col.yellow),
+      BR(),
+    ]
+  },
+
+  nikto: (args) => {
+    const target = (args ?? "").replace(/^nikto\s*/i, "").trim() || "rejectmodders.dev"
+    return [
+      L(`- Nikto v2.5.0`, col.green),
+      L(`- Target Host: ${target}`, col.fg),
+      L("- Start Time: " + new Date().toUTCString(), col.muted),
+      BR(),
+      L("+ Server: Vercel (no version disclosure - good)", col.green),
+      L("+ X-Frame-Options: DENY - good security posture", col.green),
+      L("+ HSTS header present and correct", col.green),
+      L("+ CSP header present", col.green),
+      L("+ No dangerous HTTP methods enabled", col.green),
+      L("+ No default files found", col.green),
+      BR(),
+      L("+ 0 vulnerabilities found. VulnRadar agrees.", col.green),
+      BR(),
+    ]
+  },
+
+  virus: () => [
+    L("Running VirusScan Pro 2026...", col.muted),
+    L("", col.muted),
+    L("  Scanning files...      [████████████████████] 100%", col.fg),
+    L("  Scanning memory...     [████████████████████] 100%", col.fg),
+    L("  Scanning registry...   [████████████████████] 100%", col.fg),
+    L("  Scanning your soul...  [████████████████████] 100%", col.fg),
+    BR(),
+    L("  Threats found: 1", col.red),
+    BR(),
+    L("  ⚠ THREAT: rm_curiosity.exe", col.yellow),
+    L("    Risk: HIGH (you keep typing things into terminal easter eggs)", col.yellow),
+    L("    Action: Quarantine? [Y/N]: Y", col.muted),
+    L("    Result: FAILED. Curiosity cannot be quarantined.", col.red),
+    BR(),
+    L("  All other systems: CLEAN.", col.green),
+    BR(),
+  ],
+
+  ponysay: () => [
+    L("   /\\   /\\        ", "text-pink-400"),
+    L("  ( o   o )       My little hacker,", "text-pink-400"),
+    L("  =( Y )=         my little hacker...", "text-pink-300"),
+    L("   )-   -(        what are you doing", "text-pink-400"),
+    L("  /|   |\\         in this terminal?", "text-pink-300"),
+    L(" (_|   |_)        ", "text-pink-400"),
+    BR(),
+    L("  Sparkle says: type 'help' for more commands!", col.muted),
+    BR(),
+  ],
+
+  fire: () => [
+    L("          (  )   (   )  )        ", col.red),
+    L("          ) (   )  (  (          ", col.red),
+    L("          ( )  (    ) )          ", col.red),
+    L("      _.-'  '-.(___.-'  '-.      ", col.yellow),
+    L("   .-'   .'  '         '.  '-.   ", col.yellow),
+    L("  /    .'                  '.  \\ ", col.yellow),
+    L(" |   .'                      '. |", col.fg),
+    L("  \\ '                          '/", col.fg),
+    BR(),
+    L("  🔥 This is fine.", col.muted),
+    BR(),
+  ],
+
+  "10print": () => {
+    const chars = ["\\","/"," ","\\","/"," ","\\","\\","/","/"," ","\\","/","\\","/"," ","/","\\"]
+    const rows = Array.from({length: 5}, () =>
+      Array.from({length: 36}, () => chars[Math.floor(Math.random() * chars.length)]).join("")
+    )
+    return [
+      L("10 PRINT CHR$(205.5+RND(1)); : GOTO 10", col.muted),
+      BR(),
+      ...rows.map(r => L(r, col.cyan)),
+      BR(),
+      L("(Commodore 64 vibes intensify)", col.muted),
+      BR(),
+    ]
+  },
+
+  clap: (args) => {
+    const txt = (args ?? "").replace(/^clap\s*/i, "").trim() || "this is the terminal"
+    const clapified = txt.split(" ").join(" 👏 ")
+    return [L(clapified + " 👏", col.fg), BR()]
+  },
+
+  "sudo make me a sandwich": () => [
+    L("Okay.", col.green),
+    BR(),
+    L("  🥪 Sandwich: made.", col.fg),
+    BR(),
+    L("  (xkcd.com/149)", col.muted),
+    BR(),
+  ],
+
+  "make me a sandwich": () => [
+    L("What? Make it yourself.", col.red),
+    BR(),
+    L("  hint: try 'sudo make me a sandwich'", col.muted),
+    BR(),
+  ],
+
+  ":(){ :|:& };:": () => [
+    L("Fork bomb detected!", col.red),
+    BR(),
+    L("  :(){ :|:& };:", col.red),
+    L("  bash: fork: Resource temporarily unavailable", col.red),
+    L("  bash: fork: Resource temporarily unavailable", col.red),
+    L("  bash: fork: Resource temporarily unavailable", col.red),
+    BR(),
+    L("  lol no. This is a browser.", col.green),
+    L("  Nothing actually forked. You're safe.", col.muted),
+    L("  (but don't run this in a real shell)", col.yellow),
+    BR(),
+  ],
+
+  "rm -rf /": () => [
+    L("rm: it is dangerous to operate recursively on '/'", col.red),
+    L("rm: use --no-preserve-root to override this failsafe", col.red),
+    BR(),
+    L("  Not gonna do it.", col.green),
+    L("  The site stays up. Vercel has backups anyway.", col.muted),
+    BR(),
+  ],
+
+  logout: () => [
+    L("Logout requested.", col.muted),
+    L("Saving session... done.", col.muted),
+    L("", col.muted),
+    L("There is no logout. The terminal is eternal.", col.primary),
+    L("Type 'exit' to close.", col.muted),
+    BR(),
+  ],
+
+  screenfetch: () => [
+    L("  rm@rejectmodders.dev", col.primary),
+    L("  ─────────────────────────────────", col.muted),
+    L("  OS:       Vercel Edge Linux x86_64", col.fg),
+    L("  Host:     rejectmodders.dev", col.fg),
+    L("  Kernel:   Next.js 16.2.7 (Turbopack)", col.fg),
+    L("  Shell:    rm-terminal v2.0", col.fg),
+    L("  DE:       React 19 + Framer Motion", col.fg),
+    L("  WM:       Tailwind CSS v4", col.fg),
+    L("  Theme:    Blood Red on Void Black", col.red),
+    L("  Icons:    Lucide React", col.fg),
+    L("  Terminal: This one. Obviously.", col.primary),
+    BR(),
+    L("  ████ ████ ████ ████ ████ ████ ████", col.primary),
+    BR(),
+  ],
+
+  "cat flag.txt": () => [
+    L("cat: flag.txt: No such file or directory", col.red),
+    BR(),
+    L("  hint: flags are hidden throughout this terminal.", col.muted),
+    L("  try: env, sudo cat secrets.txt, cat amanda.txt", col.muted),
+    BR(),
+  ],
+
+  uname: () => [
+    L("Linux rejectmodders.dev 6.1.0-vercel #1 SMP PREEMPT Next.js x86_64 GNU/Linux", col.fg),
+    BR(),
+  ],
+
+  xkcd: () => {
+    const refs = [
+      ["149", "Sandwich", "https://xkcd.com/149"],
+      ["327", "Exploits of a Mom (Bobby Tables)", "https://xkcd.com/327"],
+      ["353", "Python (import antigravity)", "https://xkcd.com/353"],
+      ["378", "Real Programmers", "https://xkcd.com/378"],
+      ["705", "Devotion to Duty", "https://xkcd.com/705"],
+      ["936", "Password Strength", "https://xkcd.com/936"],
+      ["1319", "Automation", "https://xkcd.com/1319"],
+      ["1654", "Universal Install Script", "https://xkcd.com/1654"],
+    ]
+    const [num, title, url] = refs[Math.floor(Math.random() * refs.length)]
+    return [
+      L(`xkcd #${num}: ${title}`, col.primary),
+      L(`  ${url}`, col.cyan),
+      BR(),
+      L("(random xkcd - go read it, they're all worth it)", col.muted),
+      BR(),
+    ]
+  },
 }

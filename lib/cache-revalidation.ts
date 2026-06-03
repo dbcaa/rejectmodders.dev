@@ -2,10 +2,10 @@ let warmupDone = false
 
 /**
  * Warm the caches on first cold start by triggering the revalidation endpoint.
- * Only runs once per server process lifetime — harmless on hot reloads.
+ * Only runs once per server process lifetime - harmless on hot reloads.
  *
  * On Vercel, the actual 12-hour schedule should be driven by a Vercel Cron Job
- * (vercel.json crons) pointing at POST /api/cron/revalidate — setInterval is
+ * (vercel.json crons) pointing at POST /api/cron/revalidate - setInterval is
  * unreliable across serverless cold starts.
  */
 export async function warmCachesOnStartup() {
@@ -28,7 +28,7 @@ export async function warmCachesOnStartup() {
 
     console.log(`[Cron] [${timestamp}] Cache warm-up completed successfully`)
   } catch (error) {
-    // Non-fatal — caches will still populate on first real request
+    // Non-fatal - caches will still populate on first real request
     console.warn(`[Cron] [${timestamp}] Cache warm-up warning:`, error)
   }
 }

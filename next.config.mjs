@@ -1,5 +1,6 @@
 // Site configuration - import from centralized config
 const SITE_URL = "https://rejectmodders.dev"
+const isDev = process.env.NODE_ENV !== "production"
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -9,6 +10,8 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  // Allow the VulnRadar sandbox tunnel to access Next.js dev resources (HMR, etc.)
+  allowedDevOrigins: ["sandbox.vulnradar.dev"],
   async headers() {
     return [
       {
@@ -69,7 +72,8 @@ const nextConfig = {
           },
           {
             key: "Cross-Origin-Resource-Policy",
-            value: "same-origin",
+            // In dev, allow the sandbox proxy to load resources
+            value: isDev ? "cross-origin" : "same-origin",
           },
           {
             key: "Cross-Origin-Embedder-Policy",
@@ -114,7 +118,8 @@ const nextConfig = {
           },
           {
             key: "Access-Control-Allow-Origin",
-            value: SITE_URL,
+            // In dev, allow all origins (sandbox proxy, localhost, etc.)
+            value: isDev ? "*" : SITE_URL,
           },
           {
             key: "Access-Control-Allow-Methods",

@@ -2,15 +2,13 @@ import type { Metadata, Viewport } from 'next'
 import { Inter, JetBrains_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { SpeedInsights } from '@vercel/speed-insights/next'
-import { CustomCursor } from '@/components/custom-cursor'
-import { PageTransition } from '@/components/page-transition'
-import { ScrollToTop } from '@/components/scroll-to-top'
-import { TerminalEasterEgg } from '@/components/terminal-easter-egg'
-import { CommandPalette } from '@/components/command-palette'
-import { FloatingCTA } from '@/components/floating-cta'
-import { BugFixToast } from '@/components/bug-fix-toast'
-import { ThemeProvider } from '@/components/theme-provider'
-import { LegacyDomainBanner } from '@/components/legacy-domain-banner'
+import { CustomCursor } from '@/components/layout/custom-cursor'
+import { PageTransition } from '@/components/layout/page-transition'
+import { ScrollToTop } from '@/components/layout/scroll-to-top'
+import { TerminalEasterEgg } from '@/components/layout/terminal-easter-egg'
+import { CommandPalette } from '@/components/layout/command-palette'
+import { ThemeProvider } from '@/components/layout/theme-provider'
+import { LegacyDomainBanner } from '@/components/layout/legacy-domain-banner'
 import {
   SITE_URL,
   SITE_NAME,
@@ -49,14 +47,7 @@ export const metadata: Metadata = {
     type: 'website',
     url: SITE_URL,
     siteName: SITE_NAME,
-    images: [
-      {
-        url: '/avatar.png',
-        width: 192,
-        height: 192,
-        alt: `${SITE_NAME} Avatar`,
-      },
-    ],
+    images: [{ url: '/avatar.png', width: 192, height: 192, alt: `${SITE_NAME} Avatar` }],
   },
   twitter: {
     card: 'summary',
@@ -64,9 +55,7 @@ export const metadata: Metadata = {
     description: 'Cybersecurity-focused developer from Missouri. Building security tools and writing code.',
     images: ['/avatar.png'],
   },
-  other: {
-    'theme-color': THEME_COLOR,
-  },
+  other: { 'theme-color': THEME_COLOR },
 }
 
 export const viewport: Viewport = {
@@ -75,13 +64,9 @@ export const viewport: Viewport = {
   initialScale: 1,
 }
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`} suppressHydrationWarning data-scroll-behavior="smooth">
+    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`} suppressHydrationWarning>
       <head>
         <link rel="manifest" href="/manifest.json" />
       </head>
@@ -97,9 +82,7 @@ export default function RootLayout({
           <CustomCursor />
           <TerminalEasterEgg />
           <CommandPalette />
-          <FloatingCTA />
           <ScrollToTop />
-          <BugFixToast />
           <PageTransition>
             {children}
           </PageTransition>

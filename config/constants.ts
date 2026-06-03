@@ -56,7 +56,6 @@ export const NAV_LINKS = [
   { label: "About", href: "/about", external: false },
   { label: "Projects", href: "/projects", external: false },
   { label: "Friends", href: "/friends", external: false },
-  { label: "Games", href: "/games", external: false },
   { label: "Spotify", href: "/spotify", external: false },
   { label: "Contact", href: "/#contact", external: false },
 ] as const
@@ -107,12 +106,8 @@ export type AllowedHost = typeof AVATAR_ALLOWED_HOSTS[number]
 
 // ── Feature Flags ────────────────────────────────────────────────────────────
 export const FEATURES = {
-  enableParticles: true,
-  enableCustomCursor: true,
   enableTerminalEasterEgg: true,
   enableCommandPalette: true,
   enableScrollToTop: true,
-  enableBugFixToast: true,
-  enableFloatingCTA: true,
   enableLegacyDomainWarning: true,
 } as const

@@ -98,7 +98,7 @@ export const ASYNC_CMDS: Record<string, AsyncCommandHandler> = {
       for (const repo of repos.slice(0, 6)) {
         lines.push(L(`  ${repo.name}`, col.cyan))
         lines.push(L(`    ${repo.description || "No description"}`, col.muted))
-        lines.push(L(`    ★ ${repo.stars}  ${repo.language || ""}`, col.fg))
+        lines.push(L(`    ★ ${repo.stargazers_count ?? 0}  ${repo.language || ""}`, col.fg))
         lines.push(BR())
       }
       return lines

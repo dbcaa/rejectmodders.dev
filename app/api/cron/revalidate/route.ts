@@ -11,7 +11,7 @@ const REVALIDATABLE_PATHS = [
     '/spotify',
 ]
 
-// Cache tags used on fetch() calls — these bust the Next.js Data Cache
+// Cache tags used on fetch() calls - these bust the Next.js Data Cache
 // entries directly without needing revalidatePath on API routes.
 const REVALIDATABLE_TAGS = [
     'github',

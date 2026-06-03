@@ -1,6 +1,6 @@
-import { Navbar } from "@/components/navbar"
-import { FooterSection } from "@/components/footer-section"
-import { ProjectsPageContent } from "@/components/projects-page-content"
+import { Navbar } from "@/components/layout/navbar"
+import { FooterSection } from "@/components/layout/footer-section"
+import { ProjectsPageContent } from "@/components/projects/projects-page-content"
 
 export const revalidate = 7200
 

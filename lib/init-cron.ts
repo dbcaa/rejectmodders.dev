@@ -1,4 +1,4 @@
-// Server-side initialization — warm caches once on cold start.
+// Server-side initialization - warm caches once on cold start.
 // The 12-hour recurring schedule is handled by a Vercel Cron Job in vercel.json
 // (POST /api/cron/revalidate every 12 h) so setInterval is not needed.
 

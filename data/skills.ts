@@ -1,6 +1,6 @@
 export interface Skill {
   name: string
-  /** Actual self-rated level — may exceed 100 (shown as label, bar capped at 100%) */
+  /** Actual self-rated level - may exceed 100 (shown as label, bar capped at 100%) */
   level: number
 }
 

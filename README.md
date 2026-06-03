@@ -23,11 +23,11 @@ npm install
 
 ### 3. Edit `data/friends.json`
 
-Add a new object to the array. All fields except `name` and `isGF` are optional — just set anything you don't have to `null`.
+Add a new object to the array. All fields except `name` and `isGF` are optional - just set anything you don't have to `null`.
 
 ```jsonc
 {
-  "name": "Your Name",        // required — whatever you go by
+  "name": "Your Name",        // required - whatever you go by
   "isGF": false,              // always false unless you're Amanda
   "discord": "123456789",     // user ID  or  full URL
   "github": "your-username",  // username or  full URL
@@ -39,23 +39,23 @@ Add a new object to the array. All fields except `name` and `isGF` are optional 
 }
 ```
 
-#### Avatar — auto-resolution
+#### Avatar - auto-resolution
 
 You don't need to set an avatar at all. If `"avatar"` is `null`, the site automatically tries to find one in this order:
 
 | Priority | Source | What's needed |
 |---|---|---|
-| 1 | **Explicit `avatar` field** | Any direct image URL — always wins if set |
-| 2 | **GitHub** | Fill in `"github"` — pulls `github.com/<username>.png`, no API key |
-| 3 | **Twitter / X** | Fill in `"twitter"` — fetched via unavatar.io, no API key |
-| 4 | **Gravatar** | Fill in `"email"` — only resolves if you have a custom Gravatar set up |
-| 5 | **YouTube** | Fill in `"youtube"` — requires a `YOUTUBE_API_KEY` env var on the server |
+| 1 | **Explicit `avatar` field** | Any direct image URL - always wins if set |
+| 2 | **GitHub** | Fill in `"github"` - pulls `github.com/<username>.png`, no API key |
+| 3 | **Twitter / X** | Fill in `"twitter"` - fetched via unavatar.io, no API key |
+| 4 | **Gravatar** | Fill in `"email"` - only resolves if you have a custom Gravatar set up |
+| 5 | **YouTube** | Fill in `"youtube"` - requires a `YOUTUBE_API_KEY` env var on the server |
 | 6 | Fallback icon | Shown if nothing above resolves |
 
 So in most cases just filling in `"github"` is enough and you're done. If you'd rather use something custom:
 
-- **Local image** — drop the file in `public/friends/yourname.png` (`.jpg` / `.gif` also work) and set `"avatar": "/friends/yourname.png"`
-- **Remote URL** — set `"avatar": "https://..."` directly and it'll be used as-is, no lookups happen
+- **Local image** - drop the file in `public/friends/yourname.png` (`.jpg` / `.gif` also work) and set `"avatar": "/friends/yourname.png"`
+- **Remote URL** - set `"avatar": "https://..."` directly and it'll be used as-is, no lookups happen
 
 ### 4. Run locally to double-check
 

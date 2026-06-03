@@ -2,7 +2,7 @@ import { createHash } from "crypto"
 
 /**
  * Wrap an external avatar URL through our caching proxy (/api/avatar?url=...).
- * This means browsers never hit GitHub/unavatar/etc. directly — only our edge
+ * This means browsers never hit GitHub/unavatar/etc. directly - only our edge
  * function does, and it caches the result for 24 h via Next.js Data Cache.
  *
  * Local paths (starting with /) are returned as-is.
@@ -42,7 +42,7 @@ function extractTwitterUsername(twitter: string | null): string | null {
       return parts[0] ?? null
     }
   } catch {
-    // raw username — strip leading @ if present
+    // raw username - strip leading @ if present
     const clean = twitter.startsWith("@") ? twitter.slice(1) : twitter
     if (!clean.includes("/") && !clean.includes(".")) return clean
   }
@@ -51,7 +51,7 @@ function extractTwitterUsername(twitter: string | null): string | null {
 
 /**
  * Resolve a Twitter/X avatar via unavatar.io.
- * No API key needed — unavatar proxies public profile pictures.
+ * No API key needed - unavatar proxies public profile pictures.
  */
 async function resolveTwitterAvatar(twitter: string | null): Promise<string | null> {
   const username = extractTwitterUsername(twitter)
@@ -72,7 +72,7 @@ async function resolveTwitterAvatar(twitter: string | null): Promise<string | nu
 
 /**
  * Resolve a YouTube channel avatar via YouTube Data API v3.
- * Requires YOUTUBE_API_KEY env var — skipped if not set.
+ * Requires YOUTUBE_API_KEY env var - skipped if not set.
  */
 async function resolveYoutubeAvatar(youtube: string | null): Promise<string | null> {
   if (!youtube) return null
@@ -157,7 +157,7 @@ async function resolveGravatarAvatar(email: string | null): Promise<string | nul
 
 /**
  * Build a GitHub avatar URL from a username.
- * Always works — no API key needed.
+ * Always works - no API key needed.
  */
 function buildGithubAvatarUrl(username: string): string {
   return `https://github.com/${username}.png?size=200`
@@ -173,7 +173,7 @@ export interface FriendRaw {
   youtube: string | null
   email: string | null
   /**
-   * Custom avatar — set this to any direct image URL (imgur, Discord CDN,
+   * Custom avatar - set this to any direct image URL (imgur, Discord CDN,
    * a friend's personal site, etc.) and it will always be used as-is,
    * skipping all auto-resolution below.
    *
@@ -193,24 +193,24 @@ export interface FriendResolved extends FriendRaw {
  * Resolve the best available avatar for a friend.
  *
  * Priority order:
- * 1. Explicit `avatar` field  — any direct image URL, always wins
- * 2. GitHub                   — derived from github URL/username, no key needed
- * 3. Twitter/X                — via unavatar.io proxy, no key needed
- * 4. Gravatar                 — from email MD5, only if a custom one is set
- * 5. YouTube                  — channel thumbnail, requires YOUTUBE_API_KEY
- * 6. null                     — fallback icon shown in UI
+ * 1. Explicit `avatar` field  - any direct image URL, always wins
+ * 2. GitHub                   - derived from github URL/username, no key needed
+ * 3. Twitter/X                - via unavatar.io proxy, no key needed
+ * 4. Gravatar                 - from email MD5, only if a custom one is set
+ * 5. YouTube                  - channel thumbnail, requires YOUTUBE_API_KEY
+ * 6. null                     - fallback icon shown in UI
  */
 export async function resolveAvatar(friend: FriendRaw): Promise<string | null> {
-  // 1. Custom avatar — always takes priority, no lookups needed
+  // 1. Custom avatar - always takes priority, no lookups needed
   // Local paths (e.g. /friends/amanda.png) are passed through as-is;
   // external URLs (e.g. an imgur link) are proxied through our cache.
   if (friend.avatar) return proxied(friend.avatar)
 
-  // 2. GitHub — always available, no API key needed
+  // 2. GitHub - always available, no API key needed
   const githubUsername = extractGithubUsername(friend.github)
   if (githubUsername) return proxied(buildGithubAvatarUrl(githubUsername))
 
-  // 3. Twitter/X — via unavatar.io, no API key needed
+  // 3. Twitter/X - via unavatar.io, no API key needed
   const twitterAvatar = await resolveTwitterAvatar(friend.twitter)
   if (twitterAvatar) return proxied(twitterAvatar)
 

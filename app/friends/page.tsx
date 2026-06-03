@@ -1,6 +1,6 @@
-import { FriendsPageContent } from "@/components/friends-page-content"
-import { Navbar } from "@/components/navbar"
-import { FooterSection } from "@/components/footer-section"
+import { Navbar } from "@/components/layout/navbar"
+import { FooterSection } from "@/components/layout/footer-section"
+import { FriendsPageContent } from "@/components/friends/friends-page-content"
 import friendsData from "@/data/friends.json"
 import { resolveAllAvatars, type FriendRaw } from "@/lib/resolve-avatar"
 
@@ -17,4 +17,3 @@ export default async function FriendsPage() {
     </main>
   )
 }
-

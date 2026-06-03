@@ -6,7 +6,7 @@ import {
   AllowedHost
 } from "@/config/constants"
 
-// Cache avatars for 2 hours — Next.js Data Cache keeps the upstream fetch result
+// Cache avatars for 2 hours - Next.js Data Cache keeps the upstream fetch result
 export const revalidate = 7200
 
 export async function GET(request: NextRequest) {
