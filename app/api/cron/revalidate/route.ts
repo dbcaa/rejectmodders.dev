@@ -7,7 +7,6 @@ const REVALIDATABLE_PATHS = [
     '/about',
     '/friends',
     '/projects',
-    '/games',
     '/spotify',
 ]
 
